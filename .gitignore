@@ -13,8 +13,7 @@
 *.iws
 
 # VS Code
-# .vscode/ is commented out by default — uncomment if preferred
-#.vscode/
+.vscode/
 
 # Claude Code
 .claude/

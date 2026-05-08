@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/noteful_card.dart';
 import '../../../core/widgets/action_button.dart';
+import '../../../core/widgets/piano_keyboard.dart';
 import '../providers/chord_provider.dart';
 import '../models/chord_definition.dart';
 
-class ChordCardView extends StatelessWidget {
-  const ChordCardView({super.key});
+class PracticeView extends StatelessWidget {
+  final VoidCallback onBack;
+
+  const PracticeView({super.key, required this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -18,24 +21,45 @@ class ChordCardView extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                NotefulCard(
-                  child: _ChordContent(provider: provider, chord: chord),
+        return SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: onBack,
+                    ),
+                    const SizedBox(width: 8),
+                    Text('练习模式', style: Theme.of(context).textTheme.titleLarge),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                if (provider.hasAnswered)
-                  ActionButton(
-                    label: '下一个和弦',
-                    icon: Icons.arrow_forward,
-                    onPressed: () => provider.nextChord(),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        NotefulCard(
+                          child: _ChordContent(provider: provider, chord: chord),
+                        ),
+                        const SizedBox(height: 16),
+                        if (provider.hasAnswered)
+                          ActionButton(
+                            label: '下一个和弦',
+                            icon: Icons.arrow_forward,
+                            onPressed: () => provider.nextChord(),
+                          ),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
                   ),
-                const SizedBox(height: 24),
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -56,8 +80,7 @@ class _ChordContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('这是什么和弦？',
-            style: theme.textTheme.titleLarge),
+        Text('这是什么和弦？', style: theme.textTheme.titleLarge),
         const SizedBox(height: 24),
         _PlayButton(
           onPressed: provider.isPlaying ? null : () => provider.playChord(),
@@ -69,21 +92,20 @@ class _ChordContent extends StatelessWidget {
           runSpacing: 8,
           children: ChordDefinition.all.map((cd) {
             final isSelected = provider.selectedAnswer == cd.nameCn;
-            final isCorrectAnswer = provider.hasAnswered &&
-                chord.chordType.id == cd.id;
-            final isWrong = provider.hasAnswered &&
-                isSelected &&
-                !provider.isCorrect;
+            final isCorrectAnswer =
+                provider.hasAnswered && chord.chordType.id == cd.id;
+            final isWrong =
+                provider.hasAnswered && isSelected && !provider.isCorrect;
 
             Color? backgroundColor;
             Color? textColor;
 
             if (isCorrectAnswer) {
-              backgroundColor = Colors.green.shade100;
-              textColor = Colors.green.shade800;
+              backgroundColor = Colors.green.shade900;
+              textColor = Colors.green.shade100;
             } else if (isWrong) {
-              backgroundColor = Colors.red.shade100;
-              textColor = Colors.red.shade800;
+              backgroundColor = Colors.red.shade900;
+              textColor = Colors.red.shade100;
             }
 
             return ChoiceChip(
@@ -93,9 +115,7 @@ class _ChordContent extends StatelessWidget {
                   ? null
                   : (_) => provider.submitAnswer(cd.nameCn),
               backgroundColor: backgroundColor,
-              labelStyle: textColor != null
-                  ? TextStyle(color: textColor)
-                  : null,
+              labelStyle: textColor != null ? TextStyle(color: textColor) : null,
             );
           }).toList(),
         ),
@@ -105,6 +125,13 @@ class _ChordContent extends StatelessWidget {
             isCorrect: provider.isCorrect,
             answerLabel: chord.answerLabel,
             chordColor: chord.chordType.color,
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            height: 160,
+            child: PianoKeyboard(
+              highlightedNotes: chord.midiNotes.toSet(),
+            ),
           ),
         ],
       ],
@@ -187,10 +214,7 @@ class _FeedbackArea extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          answerLabel,
-          style: theme.textTheme.bodyMedium,
-        ),
+        Text(answerLabel, style: theme.textTheme.bodyMedium),
         Text(
           '色彩：$chordColor',
           style: theme.textTheme.bodySmall?.copyWith(

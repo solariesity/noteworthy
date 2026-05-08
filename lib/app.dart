@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/sidebar.dart';
 import 'modules/word/views/word_card_view.dart';
-import 'modules/chord/views/chord_card_view.dart';
-import 'core/widgets/module_selector.dart';
+import 'modules/chord/views/chord_hub_view.dart';
+import 'modules/vocab/views/vocab_list_view.dart';
+import 'modules/settings/views/settings_view.dart';
 
 class NoteworthyApp extends StatelessWidget {
   const NoteworthyApp({super.key});
@@ -13,7 +14,7 @@ class NoteworthyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Noteworthy',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
+      theme: AppTheme.dark,
       home: const HomePage(),
     );
   }
@@ -27,49 +28,41 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _moduleIndex = 0;
+  int _selectedNav = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            Text(
-              'Noteworthy',
-              style: GoogleFonts.playfairDisplay(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '词弦',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ModuleSelector(
-              currentIndex: _moduleIndex,
-              onChanged: (i) => setState(() => _moduleIndex = i),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
+      body: Row(
+        children: [
+          Sidebar(
+            selectedIndex: _selectedNav,
+            onChanged: (i) => setState(() => _selectedNav = i),
+          ),
+          Expanded(
+            child: SafeArea(
               child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 250),
                 switchInCurve: Curves.easeOut,
                 switchOutCurve: Curves.easeIn,
-                child: _moduleIndex == 0
-                    ? WordCardView(key: const ValueKey('word'))
-                    : ChordCardView(key: const ValueKey('chord')),
+                child: _buildPage(_selectedNav),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildPage(int index) {
+    return switch (index) {
+      0 => const WordCardView(key: ValueKey('word')),
+      1 => const ChordHubView(key: ValueKey('chord')),
+      2 => VocabListView(
+        key: const ValueKey('vocab'),
+        onNavigateToWord: () => setState(() => _selectedNav = 0),
+      ),
+      _ => const SettingsView(key: ValueKey('settings')),
+    };
   }
 }

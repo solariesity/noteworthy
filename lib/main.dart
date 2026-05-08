@@ -6,6 +6,7 @@ import 'modules/word/providers/word_provider.dart';
 import 'modules/chord/services/chord_generator.dart';
 import 'modules/chord/providers/chord_provider.dart';
 import 'midi/services/midi_scheduler.dart';
+import 'midi/services/midi_player.dart';
 import 'midi/midi_factory.dart';
 
 void main() async {
@@ -20,6 +21,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        Provider<MidiPlayer>.value(value: midiPlayer),
         ChangeNotifierProvider(
           create: (_) => WordProvider(wordService)..nextWord(),
         ),
