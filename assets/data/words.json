@@ -1,0 +1,241 @@
+[
+  {
+    "word": "ephemeral",
+    "pronunciation": "/ɪˈfem.ər.əl/",
+    "definitionCn": "短暂的，转瞬即逝的",
+    "definitionEn": "lasting for a very short time",
+    "partOfSpeech": "adj.",
+    "difficulty": "B2",
+    "examples": [
+      { "en": "Fame is ephemeral.", "cn": "名声是短暂的。" },
+      { "en": "The ephemeral beauty of cherry blossoms draws crowds every spring.", "cn": "樱花转瞬即逝的美每年春天都吸引着人群。" }
+    ],
+    "rootAnalysis": {
+      "overallMeaning": "lasting only for a day",
+      "components": [
+        { "part": "epi-", "meaning": "upon, on", "origin": "Greek", "description": "" },
+        { "part": "hemera", "meaning": "day", "origin": "Greek", "description": "" },
+        { "part": "-al", "meaning": "adjective suffix", "origin": "Latin", "description": "" }
+      ]
+    },
+    "collocations": [
+      { "phrase": "ephemeral beauty", "meaning": "转瞬即逝的美" },
+      { "phrase": "ephemeral nature", "meaning": "短暂的本质" }
+    ]
+  },
+  {
+    "word": "ubiquitous",
+    "pronunciation": "/juːˈbɪk.wɪ.təs/",
+    "definitionCn": "无处不在的",
+    "definitionEn": "present, appearing, or found everywhere",
+    "partOfSpeech": "adj.",
+    "difficulty": "C1",
+    "examples": [
+      { "en": "Smartphones have become ubiquitous in modern life.", "cn": "智能手机在现代生活中已无处不在。" }
+    ],
+    "collocations": [
+      { "phrase": "ubiquitous presence", "meaning": "无处不在的存在" },
+      { "phrase": "ubiquitous computing", "meaning": "普适计算" }
+    ]
+  },
+  {
+    "word": "serendipity",
+    "pronunciation": "/ˌser.ənˈdɪp.ə.ti/",
+    "definitionCn": "意外发现珍奇事物的本领，机缘巧合",
+    "definitionEn": "the occurrence of events by chance in a happy way",
+    "partOfSpeech": "n.",
+    "difficulty": "C2",
+    "examples": [
+      { "en": "Finding that book was pure serendipity.", "cn": "找到那本书纯属机缘巧合。" }
+    ],
+    "collocations": [
+      { "phrase": "pure serendipity", "meaning": "纯粹的机缘" },
+      { "phrase": "a moment of serendipity", "meaning": "灵光乍现的时刻" }
+    ]
+  },
+  {
+    "word": "eloquent",
+    "pronunciation": "/ˈel.ə.kwənt/",
+    "definitionCn": "雄辩的，有口才的",
+    "definitionEn": "fluent or persuasive in speaking or writing",
+    "partOfSpeech": "adj.",
+    "difficulty": "B2",
+    "examples": [
+      { "en": "She gave an eloquent speech about the importance of education.", "cn": "她就教育的重要性发表了一番雄辩的演讲。" }
+    ],
+    "collocations": [
+      { "phrase": "eloquent testimony", "meaning": "有力的证词" },
+      { "phrase": "eloquent silence", "meaning": "意味深长的沉默" }
+    ]
+  },
+  {
+    "word": "nostalgia",
+    "pronunciation": "/nɒˈstæl.dʒə/",
+    "definitionCn": "怀旧，乡愁",
+    "definitionEn": "a sentimental longing for the past",
+    "partOfSpeech": "n.",
+    "difficulty": "B2",
+    "examples": [
+      { "en": "The old song filled her with nostalgia.", "cn": "那首老歌让她充满了怀旧之情。" }
+    ],
+    "collocations": [
+      { "phrase": "wave of nostalgia", "meaning": "一阵怀旧之情" },
+      { "phrase": "nostalgia for childhood", "meaning": "对童年的怀念" }
+    ]
+  },
+  {
+    "word": "resilient",
+    "pronunciation": "/rɪˈzɪl.i.ənt/",
+    "definitionCn": "有韧性的，能迅速恢复的",
+    "definitionEn": "able to withstand or recover quickly from difficult conditions",
+    "partOfSpeech": "adj.",
+    "difficulty": "C1",
+    "examples": [
+      { "en": "Children are often more resilient than adults think.", "cn": "孩子们往往比成年人想象的更有韧性。" }
+    ],
+    "rootAnalysis": {
+      "overallMeaning": "springing back",
+      "components": [
+        { "part": "re-", "meaning": "back, again", "origin": "Latin", "description": "" },
+        { "part": "salire", "meaning": "to jump, leap", "origin": "Latin", "description": "" },
+        { "part": "-ent", "meaning": "adjective suffix", "origin": "Latin", "description": "" }
+      ]
+    },
+    "collocations": [
+      { "phrase": "resilient economy", "meaning": "韧性经济" },
+      { "phrase": "highly resilient", "meaning": "高度弹性的" }
+    ]
+  },
+  {
+    "word": "ambiguous",
+    "pronunciation": "/æmˈbɪɡ.ju.əs/",
+    "definitionCn": "模棱两可的，含糊的",
+    "definitionEn": "open to more than one interpretation",
+    "partOfSpeech": "adj.",
+    "difficulty": "B2",
+    "examples": [
+      { "en": "The wording of the contract is deliberately ambiguous.", "cn": "合同的措辞故意模棱两可。" }
+    ],
+    "collocations": [
+      { "phrase": "deliberately ambiguous", "meaning": "故意含糊其辞" },
+      { "phrase": "ambiguous statement", "meaning": "模棱两可的陈述" }
+    ]
+  },
+  {
+    "word": "pragmatic",
+    "pronunciation": "/præɡˈmæt.ɪk/",
+    "definitionCn": "务实的，实用的",
+    "definitionEn": "dealing with things sensibly and realistically",
+    "partOfSpeech": "adj.",
+    "difficulty": "C1",
+    "examples": [
+      { "en": "We need a pragmatic approach to this problem.", "cn": "我们需要一个务实的方法来解决这个问题。" }
+    ],
+    "collocations": [
+      { "phrase": "pragmatic approach", "meaning": "务实的方法" },
+      { "phrase": "pragmatic solution", "meaning": "实用的解决方案" }
+    ]
+  },
+  {
+    "word": "altruistic",
+    "pronunciation": "/ˌæl.truˈɪs.tɪk/",
+    "definitionCn": "利他的，无私的",
+    "definitionEn": "showing a selfless concern for the well-being of others",
+    "partOfSpeech": "adj.",
+    "difficulty": "C1",
+    "examples": [
+      { "en": "Her altruistic actions inspired the entire community.", "cn": "她的无私行为激励了整个社区。" }
+    ],
+    "collocations": [
+      { "phrase": "altruistic behavior", "meaning": "利他行为" },
+      { "phrase": "purely altruistic", "meaning": "纯粹利他的" }
+    ]
+  },
+  {
+    "word": "meticulous",
+    "pronunciation": "/məˈtɪk.jə.ləs/",
+    "definitionCn": "一丝不苟的，极其注意细节的",
+    "definitionEn": "showing great attention to detail; very careful and precise",
+    "partOfSpeech": "adj.",
+    "difficulty": "C1",
+    "examples": [
+      { "en": "She is meticulous in her research methodology.", "cn": "她在研究方法上极其严谨。" }
+    ],
+    "collocations": [
+      { "phrase": "meticulous attention to detail", "meaning": "对细节的一丝不苟" },
+      { "phrase": "meticulous planning", "meaning": "周密的计划" }
+    ]
+  },
+  {
+    "word": "juxtapose",
+    "pronunciation": "/ˌdʒʌk.stəˈpəʊz/",
+    "definitionCn": "并列放置，对比",
+    "definitionEn": "to place close together for contrasting effect",
+    "partOfSpeech": "v.",
+    "difficulty": "C2",
+    "examples": [
+      { "en": "The exhibition juxtaposes modern art with classical pieces.", "cn": "展览将现代艺术与古典作品并列展示。" }
+    ],
+    "collocations": [
+      { "phrase": "juxtapose with", "meaning": "与……并列对比" }
+    ]
+  },
+  {
+    "word": "catharsis",
+    "pronunciation": "/kəˈθɑː.sɪs/",
+    "definitionCn": "宣泄，净化",
+    "definitionEn": "the process of releasing strong emotions",
+    "partOfSpeech": "n.",
+    "difficulty": "C2",
+    "examples": [
+      { "en": "Writing in a journal can provide a sense of catharsis.", "cn": "写日记可以带来一种宣泄的感觉。" }
+    ],
+    "collocations": [
+      { "phrase": "emotional catharsis", "meaning": "情感宣泄" },
+      { "phrase": "experience catharsis", "meaning": "体验宣泄" }
+    ]
+  },
+  {
+    "word": "quintessential",
+    "pronunciation": "/ˌkwɪn.tɪˈsen.ʃəl/",
+    "definitionCn": "典型的，精髓的",
+    "definitionEn": "representing the most perfect example of a quality",
+    "partOfSpeech": "adj.",
+    "difficulty": "C2",
+    "examples": [
+      { "en": "Paris is the quintessential romantic city.", "cn": "巴黎是典型的浪漫之都。" }
+    ],
+    "collocations": [
+      { "phrase": "quintessential example", "meaning": "典型范例" }
+    ]
+  },
+  {
+    "word": "ineffable",
+    "pronunciation": "/ɪnˈef.ə.bəl/",
+    "definitionCn": "难以言喻的，不可名状的",
+    "definitionEn": "too great or extreme to be expressed in words",
+    "partOfSpeech": "adj.",
+    "difficulty": "C2",
+    "examples": [
+      { "en": "The beauty of the landscape was ineffable.", "cn": "那片风景的美难以言喻。" }
+    ],
+    "collocations": [
+      { "phrase": "ineffable joy", "meaning": "难以言喻的喜悦" },
+      { "phrase": "ineffable beauty", "meaning": "不可名状的美" }
+    ]
+  },
+  {
+    "word": "reticent",
+    "pronunciation": "/ˈret.ɪ.sənt/",
+    "definitionCn": "沉默寡言的，不愿多谈的",
+    "definitionEn": "not revealing one's thoughts readily",
+    "partOfSpeech": "adj.",
+    "difficulty": "C1",
+    "examples": [
+      { "en": "He was reticent about his personal life.", "cn": "他对自己的私生活缄口不言。" }
+    ],
+    "collocations": [
+      { "phrase": "reticent about", "meaning": "对……沉默寡言" }
+    ]
+  }
+]

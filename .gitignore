@@ -1,0 +1,48 @@
+# Miscellaneous
+*.class
+*.log
+*.swp
+.DS_Store
+.history
+.svn/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+# .vscode/ is commented out by default — uncomment if preferred
+#.vscode/
+
+# Claude Code
+.claude/
+
+# Flutter/Dart
+.dart_tool/
+.pub-cache/
+.pub/
+/build/
+/coverage/
+.flutter-plugins-dependencies
+**/doc/api/
+**/ios/Flutter/.last_build_id
+
+# Symbolication / Obfuscation
+app.*.symbols
+app.*.map.json
+
+# Android
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Release
+release/
+
+# Secrets
+*.env
+*.jks
+*.keystore
+android/key.properties
