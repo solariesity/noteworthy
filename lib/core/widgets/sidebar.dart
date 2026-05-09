@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:window_manager/window_manager.dart';
 
 class Sidebar extends StatelessWidget {
   final int selectedIndex;
@@ -27,22 +28,30 @@ class Sidebar extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                Icon(Icons.music_note, size: 18, color: theme.colorScheme.primary),
-                const SizedBox(width: 10),
-                Text(
-                  'Noteworthy',
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: theme.colorScheme.primary,
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onPanStart: (_) => windowManager.startDragging(),
+            child: const SizedBox(height: 16),
+          ),
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onPanStart: (_) => windowManager.startDragging(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  Icon(Icons.music_note, size: 18, color: theme.colorScheme.primary),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Noteworthy',
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 6),

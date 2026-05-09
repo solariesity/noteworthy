@@ -13,6 +13,7 @@ class ChordProvider extends ChangeNotifier {
   ChordInstance? _currentChord;
   ChordPlayState _state = ChordPlayState.idle;
   String? _selectedAnswer;
+  bool _hasPlayed = false;
   Timer? _debounceTimer;
 
   ChordProvider(this._generator, this._scheduler);
@@ -22,6 +23,8 @@ class ChordProvider extends ChangeNotifier {
   String? get selectedAnswer => _selectedAnswer;
   bool get isPlaying => _state == ChordPlayState.playing;
   bool get hasAnswered => _state == ChordPlayState.answered;
+  bool get hasPlayed => _hasPlayed;
+
   bool get isCorrect =>
       _selectedAnswer == _currentChord?.chordType.nameCn;
 
@@ -31,12 +34,15 @@ class ChordProvider extends ChangeNotifier {
 
     _currentChord = _generator.generate();
     _selectedAnswer = null;
+    _hasPlayed = false;
     _state = ChordPlayState.idle;
     notifyListeners();
   }
 
   Future<void> playChord() async {
     if (_currentChord == null || isPlaying) return;
+    _selectedAnswer = null;
+    _hasPlayed = true;
     _state = ChordPlayState.playing;
     notifyListeners();
 
@@ -44,12 +50,14 @@ class ChordProvider extends ChangeNotifier {
     _scheduler.playChord(_currentChord!.midiNotes, durationMs: durationMs);
 
     await Future.delayed(const Duration(milliseconds: durationMs));
-    _state = ChordPlayState.idle;
-    notifyListeners();
+    if (_state == ChordPlayState.playing) {
+      _state = ChordPlayState.idle;
+      notifyListeners();
+    }
   }
 
   void submitAnswer(String answer) {
-    if (hasAnswered || _currentChord == null) return;
+    if (hasAnswered || isPlaying || !_hasPlayed || _currentChord == null) return;
     _selectedAnswer = answer;
     _state = ChordPlayState.answered;
     notifyListeners();

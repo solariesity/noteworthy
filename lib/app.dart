@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:window_manager/window_manager.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/sidebar.dart';
+import 'core/widgets/window_controls.dart';
 import 'modules/word/views/word_card_view.dart';
 import 'modules/chord/views/chord_hub_view.dart';
 import 'modules/vocab/views/vocab_list_view.dart';
@@ -33,21 +35,41 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
+      body: Stack(
         children: [
-          Sidebar(
-            selectedIndex: _selectedNav,
-            onChanged: (i) => setState(() => _selectedNav = i),
-          ),
-          Expanded(
-            child: SafeArea(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
-                switchInCurve: Curves.easeOut,
-                switchOutCurve: Curves.easeIn,
-                child: _buildPage(_selectedNav),
+          Row(
+            children: [
+              Sidebar(
+                selectedIndex: _selectedNav,
+                onChanged: (i) => setState(() => _selectedNav = i),
               ),
+              Expanded(
+                child: SafeArea(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    child: _buildPage(_selectedNav),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 138, // leave room for window controls
+            height: 48,
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onPanStart: (_) => windowManager.startDragging(),
+              child: const SizedBox.expand(),
             ),
+          ),
+          const Positioned(
+            top: 0,
+            right: 0,
+            child: WindowControls(),
           ),
         ],
       ),

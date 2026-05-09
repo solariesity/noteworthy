@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 import 'app.dart';
 import 'modules/word/services/word_service.dart';
 import 'modules/word/providers/word_provider.dart';
@@ -11,6 +12,10 @@ import 'midi/midi_factory.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+  await windowManager.setMinimumSize(const Size(900, 600));
 
   final wordService = WordService();
   await wordService.initialize();

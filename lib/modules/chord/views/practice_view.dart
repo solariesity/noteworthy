@@ -113,7 +113,18 @@ class _ChordContent extends StatelessWidget {
               selected: isSelected,
               onSelected: provider.hasAnswered
                   ? null
-                  : (_) => provider.submitAnswer(cd.nameCn),
+                  : (_) {
+                      if (!provider.hasPlayed) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('请点击播放按钮，然后选择'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                        return;
+                      }
+                      provider.submitAnswer(cd.nameCn);
+                    },
               backgroundColor: backgroundColor,
               labelStyle: textColor != null ? TextStyle(color: textColor) : null,
             );
