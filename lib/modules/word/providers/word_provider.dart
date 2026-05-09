@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/word_entry.dart';
 import '../services/word_service.dart';
@@ -7,8 +8,9 @@ class WordProvider extends ChangeNotifier {
 
   WordEntry? _currentWord;
   String? _previousWordText;
-  int _planIndex = -1;
   List<WordEntry>? _planWords;
+  List<int> _shuffledIndices = [];
+  int _planPosition = 0;
 
   WordProvider(this._wordService);
 
@@ -25,15 +27,23 @@ class WordProvider extends ChangeNotifier {
 
   void loadPlanWords(List<WordEntry> words) {
     _planWords = words;
-    _planIndex = 0;
     _previousWordText = null;
-    _currentWord = words.isNotEmpty ? words.first : null;
+    if (words.isEmpty) {
+      _currentWord = null;
+      _shuffledIndices = [];
+      _planPosition = 0;
+    } else {
+      _shuffledIndices = List.generate(words.length, (i) => i)..shuffle(Random());
+      _planPosition = 0;
+      _currentWord = words[_shuffledIndices[0]];
+    }
     notifyListeners();
   }
 
   void resetToDefault() {
     _planWords = null;
-    _planIndex = -1;
+    _shuffledIndices = [];
+    _planPosition = 0;
     _previousWordText = null;
     _currentWord = _wordService.randomWord();
     notifyListeners();
@@ -42,30 +52,17 @@ class WordProvider extends ChangeNotifier {
   void nextWord() {
     _previousWordText = _currentWord?.word;
 
-    if (_planWords != null) {
-      _planIndex++;
-      if (_planIndex >= _planWords!.length) {
-        _planIndex = 0;
+    if (_planWords != null && _shuffledIndices.isNotEmpty) {
+      _planPosition++;
+      if (_planPosition >= _shuffledIndices.length) {
+        _shuffledIndices.shuffle(Random());
+        _planPosition = 0;
       }
-      _currentWord = _planWords![_planIndex];
+      _currentWord = _planWords![_shuffledIndices[_planPosition]];
     } else {
       _currentWord = _wordService.randomWord(exclude: _previousWordText);
-      _planIndex = -1;
+      _planPosition = 0;
     }
-    notifyListeners();
-  }
-
-  void moveToNextInPlan() {
-    if (_planWords == null) {
-      nextWord();
-      return;
-    }
-    _previousWordText = _currentWord?.word;
-    _planIndex++;
-    if (_planIndex >= _planWords!.length) {
-      _planIndex = 0;
-    }
-    _currentWord = _planWords![_planIndex];
     notifyListeners();
   }
 }

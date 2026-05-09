@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
+import 'core/theme/theme_provider.dart';
 import 'app.dart';
 import 'modules/word/services/word_service.dart';
 import 'modules/word/providers/word_provider.dart';
@@ -29,6 +30,9 @@ void main() async {
   final planProvider = PlanProvider();
   await planProvider.initialize();
 
+  final themeProvider = ThemeProvider();
+  await themeProvider.initialize();
+
   final midiPlayer = createMidiPlayer();
   await midiPlayer.initialize();
 
@@ -40,6 +44,7 @@ void main() async {
           create: (_) => WordProvider(wordService)..nextWord(),
         ),
         ChangeNotifierProvider.value(value: planProvider),
+        ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider(
           create: (_) => ChordProvider(
             ChordGenerator(),

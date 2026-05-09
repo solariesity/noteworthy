@@ -1,7 +1,9 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_provider.dart';
 import 'core/widgets/sidebar.dart';
 import 'core/widgets/window_controls.dart';
 import 'modules/home/views/home_view.dart';
@@ -14,11 +16,15 @@ class NoteworthyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Noteworthy',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      home: const HomePage(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, _) {
+        return MaterialApp(
+          title: 'Noteworthy',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.dark(themeProvider.accentColor),
+          home: const HomePage(),
+        );
+      },
     );
   }
 }

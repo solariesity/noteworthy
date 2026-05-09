@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/widgets/noteful_card.dart';
 import '../../../core/widgets/action_button.dart';
 import '../providers/word_provider.dart';
+import '../providers/plan_provider.dart';
 import '../models/word_entry.dart';
 
 class WordCardView extends StatelessWidget {
@@ -41,11 +42,38 @@ class WordCardView extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: ActionButton(
-                  label: '下一个词',
-                  icon: Icons.arrow_forward,
-                  onPressed: () => provider.nextWord(),
+                padding: const EdgeInsets.only(bottom: 16, left: 20, right: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ActionButton(
+                        label: '下一个词',
+                        icon: Icons.arrow_forward,
+                        onPressed: () => provider.nextWord(),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Consumer<PlanProvider>(
+                      builder: (context, planProvider, _) {
+                        final favorited = planProvider.isFavorited(word.word);
+                        return IconButton.filled(
+                          onPressed: () => planProvider.toggleFavorite(word),
+                          icon: Icon(favorited ? Icons.star : Icons.star_border),
+                          style: IconButton.styleFrom(
+                            backgroundColor: favorited
+                                ? Colors.amber.shade700
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                            foregroundColor: favorited
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
