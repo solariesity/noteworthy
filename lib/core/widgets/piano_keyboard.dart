@@ -18,28 +18,50 @@ class PianoKeyboard extends StatelessWidget {
     this.showLabels = true,
   });
 
-  static const _whiteNotes = [
-    48, 50, 52, 53, 55, 57, 59,
-    60, 62, 64, 65, 67, 69, 71, 72,
-  ];
-
-  static const _blackNotes = [
-    49, 51, null, 54, 56, 58, null,
-    61, 63, null, 66, 68, 70, null,
-  ];
-
   static const _noteLabels = <int, String>{
+    36: 'C2', 38: 'D2', 40: 'E2', 41: 'F2', 43: 'G2', 45: 'A2', 47: 'B2',
     48: 'C3', 50: 'D3', 52: 'E3', 53: 'F3', 55: 'G3', 57: 'A3', 59: 'B3',
     60: 'C4', 62: 'D4', 64: 'E4', 65: 'F4', 67: 'G4', 69: 'A4', 71: 'B4',
-    72: 'C5',
+    72: 'C5', 74: 'D5', 76: 'E5', 77: 'F5', 79: 'G5', 81: 'A5', 83: 'B5',
+    84: 'C6',
   };
+
+  static bool _isWhite(int note) {
+    final n = note % 12;
+    return n == 0 || n == 2 || n == 4 || n == 5 || n == 7 || n == 9 || n == 11;
+  }
+
+  List<int> _buildWhiteNotes() {
+    final notes = <int>[];
+    for (var i = startNote; i <= endNote; i++) {
+      if (_isWhite(i)) notes.add(i);
+    }
+    return notes;
+  }
+
+  List<int?> _buildBlackNotes() {
+    final whiteNotes = _buildWhiteNotes();
+    final result = <int?>[];
+    for (final w in whiteNotes) {
+      final black = w + 1;
+      if (black <= endNote && !_isWhite(black)) {
+        result.add(black);
+      } else {
+        result.add(null);
+      }
+    }
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final whiteNotes = _buildWhiteNotes();
+    final blackNotes = _buildBlackNotes();
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final keyboardWidth = constraints.maxWidth;
-        final whiteKeyCount = _whiteNotes.length;
+        final whiteKeyCount = whiteNotes.length;
         final whiteKeyWidth = keyboardWidth / whiteKeyCount;
         final blackKeyWidth = whiteKeyWidth * 0.6;
         final whiteKeyHeight = constraints.maxHeight;
@@ -50,6 +72,8 @@ class PianoKeyboard extends StatelessWidget {
             final note = _hitTest(
               details.localPosition.dx,
               details.localPosition.dy,
+              whiteNotes,
+              blackNotes,
               whiteKeyWidth,
               blackKeyWidth,
               whiteKeyHeight,
@@ -63,6 +87,8 @@ class PianoKeyboard extends StatelessWidget {
             final note = _hitTest(
               details.localPosition.dx,
               details.localPosition.dy,
+              whiteNotes,
+              blackNotes,
               whiteKeyWidth,
               blackKeyWidth,
               whiteKeyHeight,
@@ -76,6 +102,8 @@ class PianoKeyboard extends StatelessWidget {
           child: CustomPaint(
             size: Size(keyboardWidth, whiteKeyHeight),
             painter: _PianoPainter(
+              whiteNotes: whiteNotes,
+              blackNotes: blackNotes,
               highlightedNotes: highlightedNotes,
               whiteKeyWidth: whiteKeyWidth,
               blackKeyWidth: blackKeyWidth,
@@ -92,17 +120,19 @@ class PianoKeyboard extends StatelessWidget {
   int? _hitTest(
     double x,
     double y,
+    List<int> whiteNotes,
+    List<int?> blackNotes,
     double whiteKeyWidth,
     double blackKeyWidth,
     double whiteKeyHeight,
     double blackKeyHeight,
   ) {
     final whiteIndex = (x / whiteKeyWidth).floor();
-    if (whiteIndex < 0 || whiteIndex >= _whiteNotes.length) return null;
+    if (whiteIndex < 0 || whiteIndex >= whiteNotes.length) return null;
 
     // Check black keys first (they sit on top)
     if (y < blackKeyHeight) {
-      final blackNote = _blackNotes[whiteIndex];
+      final blackNote = blackNotes[whiteIndex];
       if (blackNote != null) {
         final leftEdge = (whiteIndex + 1) * whiteKeyWidth - blackKeyWidth / 2;
         final rightEdge = leftEdge + blackKeyWidth;
@@ -112,11 +142,13 @@ class PianoKeyboard extends StatelessWidget {
       }
     }
 
-    return _whiteNotes[whiteIndex];
+    return whiteNotes[whiteIndex];
   }
 }
 
 class _PianoPainter extends CustomPainter {
+  final List<int> whiteNotes;
+  final List<int?> blackNotes;
   final Set<int> highlightedNotes;
   final double whiteKeyWidth;
   final double blackKeyWidth;
@@ -125,6 +157,8 @@ class _PianoPainter extends CustomPainter {
   final bool showLabels;
 
   _PianoPainter({
+    required this.whiteNotes,
+    required this.blackNotes,
     required this.highlightedNotes,
     required this.whiteKeyWidth,
     required this.blackKeyWidth,
@@ -159,8 +193,8 @@ class _PianoPainter extends CustomPainter {
     );
 
     // Draw white keys
-    for (var i = 0; i < PianoKeyboard._whiteNotes.length; i++) {
-      final note = PianoKeyboard._whiteNotes[i];
+    for (var i = 0; i < whiteNotes.length; i++) {
+      final note = whiteNotes[i];
       final x = i * whiteKeyWidth;
       canvas.save();
       canvas.translate(x, 0);
@@ -173,8 +207,8 @@ class _PianoPainter extends CustomPainter {
     }
 
     // Draw black keys
-    for (var i = 0; i < PianoKeyboard._blackNotes.length; i++) {
-      final note = PianoKeyboard._blackNotes[i];
+    for (var i = 0; i < blackNotes.length; i++) {
+      final note = blackNotes[i];
       if (note == null) continue;
       final x = (i + 1) * whiteKeyWidth - blackKeyWidth / 2;
       final blackRRect = RRect.fromRectAndCorners(
@@ -190,8 +224,8 @@ class _PianoPainter extends CustomPainter {
 
     // Draw labels on white keys
     if (showLabels) {
-      for (var i = 0; i < PianoKeyboard._whiteNotes.length; i++) {
-        final note = PianoKeyboard._whiteNotes[i];
+      for (var i = 0; i < whiteNotes.length; i++) {
+        final note = whiteNotes[i];
         final label = PianoKeyboard._noteLabels[note];
         if (label == null) continue;
         final tp = TextPainter(
@@ -220,6 +254,7 @@ class _PianoPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _PianoPainter oldDelegate) {
-    return highlightedNotes != oldDelegate.highlightedNotes;
+    return highlightedNotes != oldDelegate.highlightedNotes ||
+        whiteNotes != oldDelegate.whiteNotes;
   }
 }

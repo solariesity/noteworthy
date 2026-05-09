@@ -18,22 +18,23 @@ class WordCardView extends StatelessWidget {
         }
 
         return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  NotefulCard(child: _WordContent(word: word)),
-                  const SizedBox(height: 16),
-                  ActionButton(
-                    label: '下一个词',
-                    icon: Icons.arrow_forward,
-                    onPressed: () => provider.nextWord(),
-                  ),
-                  const SizedBox(height: 24),
-                ],
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: NotefulCard(child: _WordContent(word: word)),
+                ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: ActionButton(
+                  label: '下一个词',
+                  icon: Icons.arrow_forward,
+                  onPressed: () => provider.nextWord(),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -193,15 +194,31 @@ class _CollocationsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Wrap(
-      spacing: 8,
-      runSpacing: 6,
-      children: collocations.map((c) => Chip(
-        avatar: Text(
-          c.phrase,
-          style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: collocations.map((c) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              c.phrase,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                c.meaning,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
         ),
-        label: Text(c.meaning, style: theme.textTheme.bodySmall),
       )).toList(),
     );
   }

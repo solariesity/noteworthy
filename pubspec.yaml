@@ -1,7 +1,7 @@
 name: noteworthy
 description: "词弦 - 双模块轻量级学习工具"
 publish_to: 'none'
-version: 1.0.0+1
+version: 0.3.0+1
 
 environment:
   sdk: ^3.11.5

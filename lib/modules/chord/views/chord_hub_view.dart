@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'free_play_view.dart';
 import 'practice_view.dart';
+import 'interval_practice_view.dart';
+import 'progression_reveal_view.dart';
 
-enum _ChordPage { hub, freePlay, practice }
+enum _ChordPage { hub, freePlay, practice, intervalPractice, progressionReveal }
 
 class ChordHubView extends StatefulWidget {
   const ChordHubView({super.key});
@@ -22,6 +24,12 @@ class _ChordHubViewState extends State<ChordHubView> {
     if (_page == _ChordPage.practice) {
       return PracticeView(onBack: () => setState(() => _page = _ChordPage.hub));
     }
+    if (_page == _ChordPage.intervalPractice) {
+      return IntervalPracticeView(onBack: () => setState(() => _page = _ChordPage.hub));
+    }
+    if (_page == _ChordPage.progressionReveal) {
+      return ProgressionRevealView(onBack: () => setState(() => _page = _ChordPage.hub));
+    }
     return _buildHub(context);
   }
 
@@ -37,12 +45,12 @@ class _ChordHubViewState extends State<ChordHubView> {
             Text('弦', style: theme.textTheme.headlineMedium),
             const SizedBox(height: 4),
             Text(
-              '自由弹奏或和弦练耳',
+              '弹奏 · 练耳 · 音程 · 进行',
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 32),
             Expanded(
-              child: Column(
+              child: ListView(
                 children: [
                   _EntryCard(
                     icon: Icons.piano,
@@ -54,10 +62,26 @@ class _ChordHubViewState extends State<ChordHubView> {
                   const SizedBox(height: 16),
                   _EntryCard(
                     icon: Icons.hearing,
-                    title: '练习模式',
+                    title: '和弦辨识',
                     subtitle: 'Practice',
                     description: '聆听 → 辨认 → 验证 · 12 种和弦类型',
                     onTap: () => setState(() => _page = _ChordPage.practice),
+                  ),
+                  const SizedBox(height: 16),
+                  _EntryCard(
+                    icon: Icons.arrow_upward,
+                    title: '音程练习',
+                    subtitle: 'Interval',
+                    description: '听参考音 → 辨第二个音 · 耳力训练',
+                    onTap: () => setState(() => _page = _ChordPage.intervalPractice),
+                  ),
+                  const SizedBox(height: 16),
+                  _EntryCard(
+                    icon: Icons.queue_music,
+                    title: '和弦进行',
+                    subtitle: 'Progression',
+                    description: '听根音 → 和弦序列 → 揭晓答案',
+                    onTap: () => setState(() => _page = _ChordPage.progressionReveal),
                   ),
                 ],
               ),

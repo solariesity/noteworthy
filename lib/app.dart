@@ -45,11 +45,14 @@ class _HomePageState extends State<HomePage> {
               ),
               Expanded(
                 child: SafeArea(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    switchInCurve: Curves.easeOut,
-                    switchOutCurve: Curves.easeIn,
-                    child: _buildPage(_selectedNav),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 44),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      switchInCurve: Curves.easeOut,
+                      switchOutCurve: Curves.easeIn,
+                      child: _buildPage(_selectedNav),
+                    ),
                   ),
                 ),
               ),

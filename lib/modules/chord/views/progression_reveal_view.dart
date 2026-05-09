@@ -1,0 +1,243 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/widgets/noteful_card.dart';
+import '../../../core/widgets/action_button.dart';
+import '../../../core/widgets/piano_keyboard.dart';
+import '../providers/progression_reveal_provider.dart';
+
+class ProgressionRevealView extends StatelessWidget {
+  final VoidCallback onBack;
+
+  const ProgressionRevealView({super.key, required this.onBack});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ProgressionRevealProvider>(
+      builder: (context, provider, _) {
+        final rootNote = provider.rootNote;
+
+        if (rootNote == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: onBack,
+                    ),
+                    const SizedBox(width: 8),
+                    Text('和弦进行', style: Theme.of(context).textTheme.titleLarge),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: NotefulCard(
+                      child: _ProgressionContent(
+                        provider: provider,
+                        rootNote: rootNote,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              if (provider.hasRevealed)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: ActionButton(
+                    label: '下一个',
+                    icon: Icons.arrow_forward,
+                    onPressed: () => provider.nextProgression(),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ProgressionContent extends StatelessWidget {
+  final ProgressionRevealProvider provider;
+  final int rootNote;
+
+  const _ProgressionContent({
+    required this.provider,
+    required this.rootNote,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text('听辨和弦进行', style: theme.textTheme.titleLarge),
+        const SizedBox(height: 12),
+        Text(
+          '聆听一组和弦，猜猜它们是什么',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 24),
+        _PlayButton(
+          onPressed: provider.isPlaying
+              ? null
+              : () => provider.playProgression(),
+          isPlaying: provider.isPlaying,
+        ),
+        if (provider.isPlaying) ...[
+          const SizedBox(height: 16),
+          Text(
+            provider.currentChordIndex < 0
+                ? '播放根音...'
+                : '第 ${provider.currentChordIndex + 1} 个和弦',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        ],
+        if (provider.hasPlayed) ...[
+          const SizedBox(height: 24),
+          SizedBox(
+            height: 200,
+            child: () {
+              final rangeStart = (rootNote - 12).clamp(36, 60);
+              final rangeEnd = (rootNote + 12).clamp(rangeStart + 24, 84);
+              return PianoKeyboard(
+                startNote: rangeStart,
+                endNote: rangeEnd,
+                highlightedNotes: {rootNote},
+              );
+            }(),
+          ),
+          const SizedBox(height: 20),
+          if (provider.canReveal)
+            ActionButton(
+              label: '显示答案',
+              icon: Icons.visibility,
+              onPressed: () => provider.reveal(),
+            ),
+          if (provider.hasRevealed) ...[
+            const SizedBox(height: 8),
+            ...provider.chords.asMap().entries.map((e) {
+              final i = e.key;
+              final chord = e.value;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '${i + 1}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                chord.answerLabel,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                chord.chordType.nameEn,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '色彩：${chord.chordType.color}   组成：${chord.noteNames}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        ],
+      ],
+    );
+  }
+}
+
+class _PlayButton extends StatelessWidget {
+  final VoidCallback? onPressed;
+  final bool isPlaying;
+
+  const _PlayButton({required this.onPressed, required this.isPlaying});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return GestureDetector(
+      onTap: onPressed,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isPlaying
+              ? theme.colorScheme.primary
+              : theme.colorScheme.primaryContainer,
+          boxShadow: [
+            BoxShadow(
+              color: (isPlaying
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.primaryContainer)
+                  .withValues(alpha: 0.4),
+              blurRadius: 20,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: Icon(
+          isPlaying ? Icons.graphic_eq : Icons.play_arrow,
+          size: 40,
+          color: isPlaying
+              ? theme.colorScheme.onPrimary
+              : theme.colorScheme.onPrimaryContainer,
+        ),
+      ),
+    );
+  }
+}

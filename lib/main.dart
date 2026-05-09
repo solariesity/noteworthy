@@ -6,6 +6,8 @@ import 'modules/word/services/word_service.dart';
 import 'modules/word/providers/word_provider.dart';
 import 'modules/chord/services/chord_generator.dart';
 import 'modules/chord/providers/chord_provider.dart';
+import 'modules/chord/providers/interval_practice_provider.dart';
+import 'modules/chord/providers/progression_reveal_provider.dart';
 import 'midi/services/midi_scheduler.dart';
 import 'midi/services/midi_player.dart';
 import 'midi/midi_factory.dart';
@@ -35,6 +37,17 @@ void main() async {
             ChordGenerator(),
             MidiScheduler(midiPlayer),
           )..nextChord(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => IntervalPracticeProvider(
+            MidiScheduler(midiPlayer),
+          )..nextQuestion(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProgressionRevealProvider(
+            ChordGenerator(),
+            MidiScheduler(midiPlayer),
+          )..nextProgression(),
         ),
       ],
       child: const NoteworthyApp(),

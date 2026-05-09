@@ -3,21 +3,21 @@ import 'package:provider/provider.dart';
 import '../../../core/widgets/noteful_card.dart';
 import '../../../core/widgets/action_button.dart';
 import '../../../core/widgets/piano_keyboard.dart';
-import '../providers/chord_provider.dart';
-import '../models/chord_definition.dart';
+import '../../../midi/services/midi_player.dart';
+import '../providers/interval_practice_provider.dart';
 
-class PracticeView extends StatelessWidget {
+class IntervalPracticeView extends StatelessWidget {
   final VoidCallback onBack;
 
-  const PracticeView({super.key, required this.onBack});
+  const IntervalPracticeView({super.key, required this.onBack});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ChordProvider>(
+    return Consumer<IntervalPracticeProvider>(
       builder: (context, provider, _) {
-        final chord = provider.currentChord;
+        final noteA = provider.noteA;
 
-        if (chord == null) {
+        if (noteA == null) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -33,7 +33,7 @@ class PracticeView extends StatelessWidget {
                       onPressed: onBack,
                     ),
                     const SizedBox(width: 8),
-                    Text('练习模式', style: Theme.of(context).textTheme.titleLarge),
+                    Text('音程练习', style: Theme.of(context).textTheme.titleLarge),
                   ],
                 ),
               ),
@@ -42,7 +42,7 @@ class PracticeView extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: NotefulCard(
-                      child: _ChordContent(provider: provider, chord: chord),
+                      child: _IntervalContent(provider: provider, noteA: noteA),
                     ),
                   ),
                 ),
@@ -51,9 +51,9 @@ class PracticeView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: ActionButton(
-                    label: '下一个和弦',
+                    label: '下一个',
                     icon: Icons.arrow_forward,
-                    onPressed: () => provider.nextChord(),
+                    onPressed: () => provider.nextQuestion(),
                   ),
                 ),
             ],
@@ -64,96 +64,70 @@ class PracticeView extends StatelessWidget {
   }
 }
 
-class _ChordContent extends StatelessWidget {
-  final ChordProvider provider;
-  final dynamic chord;
+class _IntervalContent extends StatelessWidget {
+  final IntervalPracticeProvider provider;
+  final int noteA;
 
-  const _ChordContent({required this.provider, required this.chord});
+  const _IntervalContent({required this.provider, required this.noteA});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final midiPlayer = context.read<MidiPlayer>();
+
+    final highlightedNotes = <int>{noteA};
+    if (provider.hasAnswered && provider.noteB != null) {
+      highlightedNotes.add(provider.noteB!);
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('这是什么和弦？', style: theme.textTheme.titleLarge),
+        Text('这是什么音？', style: theme.textTheme.titleLarge),
+        const SizedBox(height: 12),
+        Text(
+          '先听参考音，再在钢琴上点击你听到的第二个音',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
         const SizedBox(height: 24),
         _PlayButton(
-          onPressed: provider.isPlaying ? null : () => provider.playChord(),
+          onPressed: provider.isPlaying ? null : () => provider.playSequence(),
           isPlaying: provider.isPlaying,
         ),
-        const SizedBox(height: 24),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: ChordDefinition.all.map((cd) {
-            final isSelected = provider.selectedAnswer == cd.nameCn;
-            final isCorrectAnswer =
-                provider.hasAnswered && chord.chordType.id == cd.id;
-            final isWrong =
-                provider.hasAnswered && isSelected && !provider.isCorrect;
-
-            Color? backgroundColor;
-            Color? textColor;
-
-            if (isCorrectAnswer) {
-              backgroundColor = Colors.green.shade900;
-              textColor = Colors.green.shade100;
-            } else if (isWrong) {
-              backgroundColor = Colors.red.shade900;
-              textColor = Colors.red.shade100;
-            }
-
-            return ChoiceChip(
-              label: Text(cd.nameCn),
-              selected: isSelected,
-              onSelected: provider.hasAnswered
-                  ? null
-                  : (_) {
-                      if (!provider.hasPlayed) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('请点击播放按钮，然后选择'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                        return;
-                      }
-                      provider.submitAnswer(cd.nameCn);
-                    },
-              backgroundColor: backgroundColor,
-              labelStyle: textColor != null ? TextStyle(color: textColor) : null,
-            );
-          }).toList(),
-        ),
-        if (provider.hasAnswered) ...[
-          const SizedBox(height: 20),
-          _FeedbackArea(
-            isCorrect: provider.isCorrect,
-            answerLabel: chord.answerLabel,
-            chordColor: chord.chordType.color,
-          ),
-          const SizedBox(height: 20),
+        if (provider.hasPlayed) ...[
+          const SizedBox(height: 24),
           SizedBox(
-            height: 240,
+            height: 200,
             child: () {
-              final notes = chord.midiNotes;
-              var lo = 127;
-              var hi = 0;
-              for (final n in notes) {
-                if (n < lo) lo = n;
-                if (n > hi) hi = n;
-              }
-              final rangeStart = (lo - 4).clamp(36, 80);
-              final rangeEnd = (hi + 4).clamp(rangeStart + 25, 84);
+              final rangeStart = (noteA - 12).clamp(36, 60);
+              final rangeEnd = (noteA + 12).clamp(rangeStart + 24, 84);
               return PianoKeyboard(
                 startNote: rangeStart,
                 endNote: rangeEnd,
-                highlightedNotes: notes.toSet(),
+                highlightedNotes: highlightedNotes,
+                onKeyDown: provider.isPlaying || provider.hasAnswered
+                    ? null
+                    : (note) {
+                        midiPlayer.noteOn(channel: 0, note: note);
+                        provider.submitAnswer(
+                          IntervalPracticeProvider.noteDisplay(note),
+                        );
+                      },
+                onKeyUp: (note) {
+                  midiPlayer.noteOff(channel: 0, note: note);
+                },
               );
             }(),
           ),
+          if (provider.hasAnswered) ...[
+            const SizedBox(height: 20),
+            _FeedbackArea(
+              isCorrect: provider.isCorrect,
+              answerDisplay: provider.answerDisplay,
+            ),
+          ],
         ],
       ],
     );
@@ -206,13 +180,11 @@ class _PlayButton extends StatelessWidget {
 
 class _FeedbackArea extends StatelessWidget {
   final bool isCorrect;
-  final String answerLabel;
-  final String chordColor;
+  final String answerDisplay;
 
   const _FeedbackArea({
     required this.isCorrect,
-    required this.answerLabel,
-    required this.chordColor,
+    required this.answerDisplay,
   });
 
   @override
@@ -235,12 +207,9 @@ class _FeedbackArea extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(answerLabel, style: theme.textTheme.bodyMedium),
         Text(
-          '色彩：$chordColor',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
+          '答案是：$answerDisplay',
+          style: theme.textTheme.bodyMedium,
         ),
       ],
     );

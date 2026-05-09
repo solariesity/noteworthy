@@ -15,6 +15,10 @@ class ChordGenerator {
   ChordInstance generate() {
     final rootNote = _rootRangeStart +
         _random.nextInt(_rootRangeEnd - _rootRangeStart + 1);
+    return generateWithRoot(rootNote);
+  }
+
+  ChordInstance generateWithRoot(int rootNote) {
     final chordType =
         ChordDefinition.all[_random.nextInt(ChordDefinition.all.length)];
     final midiNotes =

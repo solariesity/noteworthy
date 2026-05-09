@@ -14,14 +14,13 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
+    return Center(
       child: FilledButton.icon(
         onPressed: onPressed,
         icon: icon != null ? Icon(icon, size: 20) : null,
         label: Text(label),
         style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

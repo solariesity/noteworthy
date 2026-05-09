@@ -6,6 +6,10 @@ class ChordInstance {
   final ChordDefinition chordType;
   final List<int> midiNotes;
 
+  static const _noteNames = [
+    'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
+  ];
+
   const ChordInstance({
     required this.rootNote,
     required this.rootName,
@@ -14,4 +18,8 @@ class ChordInstance {
   });
 
   String get answerLabel => '$rootName${chordType.nameCn}';
+
+  String get noteNames => midiNotes
+      .map((n) => '${_noteNames[n % 12]}${(n ~/ 12) - 1}')
+      .join(' ');
 }
