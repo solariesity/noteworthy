@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'core/theme/theme_provider.dart';
+import 'core/services/shortcut_service.dart';
 import 'app.dart';
 import 'modules/word/services/word_service.dart';
 import 'modules/word/providers/word_provider.dart';
@@ -33,6 +34,9 @@ void main() async {
   final themeProvider = ThemeProvider();
   await themeProvider.initialize();
 
+  final shortcutService = ShortcutService();
+  await shortcutService.initialize();
+
   final midiPlayer = createMidiPlayer();
   await midiPlayer.initialize();
 
@@ -45,6 +49,7 @@ void main() async {
         ),
         ChangeNotifierProvider.value(value: planProvider),
         ChangeNotifierProvider.value(value: themeProvider),
+        Provider<ShortcutService>.value(value: shortcutService),
         ChangeNotifierProvider(
           create: (_) => ChordProvider(
             ChordGenerator(),

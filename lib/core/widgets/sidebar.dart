@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
+import '../constants.dart';
 
 class Sidebar extends StatelessWidget {
   final int selectedIndex;
@@ -22,7 +23,7 @@ class Sidebar extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      width: 200,
+      width: 160,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
         border: Border(
@@ -90,7 +91,7 @@ class Sidebar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
             child: Text(
-              'v0.4.1',
+              appVersion,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

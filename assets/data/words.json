@@ -237,5 +237,165 @@
     "collocations": [
       { "phrase": "reticent about", "meaning": "对……沉默寡言" }
     ]
+  },
+  {
+    "word": "一期一会",
+    "pronunciation": "ichigo ichie",
+    "definitionCn": "一生只有一次的相遇，珍惜每一次相遇",
+    "definitionEn": "once-in-a-lifetime encounter; treasure every meeting",
+    "partOfSpeech": "n.",
+    "difficulty": "N2",
+    "examples": [
+      { "en": "一期一会を大切にする (ichigo ichie wo taisetsu ni suru)", "cn": "珍惜每一次难得的相遇。" },
+      { "en": "旅先での出会いはまさに一期一会だ (tabisaki de no deai wa masani ichigo ichie da)", "cn": "旅途中的相遇正是一期一会。" }
+    ],
+    "collocations": [
+      { "phrase": "一期一会の精神 (ichigo ichie no seishin)", "meaning": "一期一会的精神" },
+      { "phrase": "一期一会の出会い (ichigo ichie no deai)", "meaning": "一生一次的相遇" }
+    ]
+  },
+  {
+    "word": "木漏れ日",
+    "pronunciation": "komorebi",
+    "definitionCn": "从树叶缝隙中洒落的阳光",
+    "definitionEn": "sunlight filtering through tree leaves",
+    "partOfSpeech": "n.",
+    "difficulty": "N2",
+    "examples": [
+      { "en": "森の中で美しい木漏れ日を見た (mori no naka de utsukushii komorebi wo mita)", "cn": "在森林里看到了美丽的木漏れ日。" },
+      { "en": "公園のベンチで木漏れ日を浴びながら本を読む (kouen no benchi de komorebi wo abinagara hon wo yomu)", "cn": "在公园长椅上沐浴着透过树叶的阳光看书。" }
+    ],
+    "collocations": [
+      { "phrase": "木漏れ日が差す (komorebi ga sasu)", "meaning": "阳光透过树叶洒下" },
+      { "phrase": "春の木漏れ日 (haru no komorebi)", "meaning": "春天的叶间阳光" }
+    ]
+  },
+  {
+    "word": "勿体無い",
+    "pronunciation": "mottainai",
+    "definitionCn": "浪费了可惜的，暴殄天物的",
+    "definitionEn": "what a waste; too good to waste",
+    "partOfSpeech": "adj.",
+    "difficulty": "N3",
+    "examples": [
+      { "en": "まだ食べられるのに捨てるのは勿体無い (mada taberareru noni suteru no wa mottainai)", "cn": "还能吃却扔掉太浪费了。" },
+      { "en": "彼の才能を活かさないのは勿体無い (kare no sainou wo ikasanai no wa mottainai)", "cn": "不发挥他的才能太可惜了。" }
+    ],
+    "collocations": [
+      { "phrase": "勿体無い精神 (mottainai seishin)", "meaning": "不浪费的精神" },
+      { "phrase": "勿体無いことをする (mottainai koto wo suru)", "meaning": "做浪费的事" }
+    ]
+  },
+  {
+    "word": "詫び寂び",
+    "pronunciation": "wabi-sabi",
+    "definitionCn": "残缺之美，朴素寂静的美学",
+    "definitionEn": "aesthetic of imperfection, impermanence, and simplicity",
+    "partOfSpeech": "n.",
+    "difficulty": "N2",
+    "examples": [
+      { "en": "詫び寂びは日本の伝統的な美意識だ (wabi-sabi wa nihon no dentouteki na biishiki da)", "cn": "侘寂是日本传统的审美意识。" },
+      { "en": "この茶碗には詫び寂びの美しさがある (kono chawan ni wa wabi-sabi no utsukushisa ga aru)", "cn": "这个茶碗有侘寂之美。" }
+    ],
+    "collocations": [
+      { "phrase": "詫び寂びの世界 (wabi-sabi no sekai)", "meaning": "侘寂的世界" },
+      { "phrase": "詫び寂びを感じる (wabi-sabi wo kanjiru)", "meaning": "感受侘寂之美" }
+    ]
+  },
+  {
+    "word": "空気を読む",
+    "pronunciation": "kuuki wo yomu",
+    "definitionCn": "察言观色，读空气",
+    "definitionEn": "to read the room; to sense the atmosphere",
+    "partOfSpeech": "phrase",
+    "difficulty": "N2",
+    "examples": [
+      { "en": "空気を読んで発言したほうがいい (kuuki wo yonde hatsugen shita hou ga ii)", "cn": "最好察言观色后再发言。" },
+      { "en": "彼は空気を読めない人だ (kare wa kuuki wo yomenai hito da)", "cn": "他是个不会读空气的人。" }
+    ],
+    "collocations": [
+      { "phrase": "空気を読めない・KY (kuuki wo yomenai)", "meaning": "不会察言观色" },
+      { "phrase": "空気を読んだ対応 (kuuki wo yonda taiou)", "meaning": "懂分寸的应对" }
+    ]
+  },
+  {
+    "word": "頑張る",
+    "pronunciation": "ganbaru",
+    "definitionCn": "加油，努力，坚持",
+    "definitionEn": "to persevere; to do one's best",
+    "partOfSpeech": "v.",
+    "difficulty": "N4",
+    "examples": [
+      { "en": "試験に向けて毎日頑張っている (shiken ni mukete mainichi ganbatte iru)", "cn": "为了考试每天都在努力。" },
+      { "en": "最後まで頑張ろう (saigo made ganbarou)", "cn": "努力到最后一刻吧。" }
+    ],
+    "collocations": [
+      { "phrase": "頑張ってね (ganbatte ne)", "meaning": "加油哦" },
+      { "phrase": "一生懸命頑張る (isshoukenmei ganbaru)", "meaning": "拼命努力" }
+    ]
+  },
+  {
+    "word": "おもてなし",
+    "pronunciation": "omotenashi",
+    "definitionCn": "用心招待，发自内心的款待",
+    "definitionEn": "heartfelt hospitality; wholehearted service",
+    "partOfSpeech": "n.",
+    "difficulty": "N2",
+    "examples": [
+      { "en": "日本のおもてなしの心は世界中で評価されている (nihon no omotenashi no kokoro wa sekaijuu de hyouka sarete iru)", "cn": "日本的待客之心在世界范围内受到好评。" },
+      { "en": "旅館で温かいおもてなしを受けた (ryokan de atatakai omotenashi wo uketa)", "cn": "在旅馆受到了温暖的款待。" }
+    ],
+    "collocations": [
+      { "phrase": "おもてなしの心 (omotenashi no kokoro)", "meaning": "待客之心" },
+      { "phrase": "おもてなし料理 (omotenashi ryouri)", "meaning": "待客料理" }
+    ]
+  },
+  {
+    "word": "生き甲斐",
+    "pronunciation": "ikigai",
+    "definitionCn": "人生的意义，活着的价值",
+    "definitionEn": "a reason for living; something that makes life worthwhile",
+    "partOfSpeech": "n.",
+    "difficulty": "N2",
+    "examples": [
+      { "en": "趣味が私の生き甲斐です (shumi ga watashi no ikigai desu)", "cn": "兴趣是我活着的意义。" },
+      { "en": "仕事に生き甲斐を感じる (shigoto ni ikigai wo kanjiru)", "cn": "在工作中感受到人生的价值。" }
+    ],
+    "collocations": [
+      { "phrase": "生き甲斐を持つ (ikigai wo motsu)", "meaning": "拥有生活意义" },
+      { "phrase": "生き甲斐のある人生 (ikigai no aru jinsei)", "meaning": "有意义的人生" }
+    ]
+  },
+  {
+    "word": "懐かしい",
+    "pronunciation": "natsukashii",
+    "definitionCn": "令人怀念的，让人想念的",
+    "definitionEn": "nostalgic; fondly remembered; dear",
+    "partOfSpeech": "adj.",
+    "difficulty": "N3",
+    "examples": [
+      { "en": "この曲を聴くと子どもの頃が懐かしい (kono kyoku wo kiku to kodomo no koro ga natsukashii)", "cn": "听到这首歌就怀念起小时候。" },
+      { "en": "久しぶりに故郷に帰ってとても懐かしかった (hisashiburi ni kokyou ni kaette totemo natsukashikatta)", "cn": "久违地回到故乡，非常怀念。" }
+    ],
+    "collocations": [
+      { "phrase": "懐かしい思い出 (natsukashii omoide)", "meaning": "令人怀念的回忆" },
+      { "phrase": "懐かしい顔 (natsukashii kao)", "meaning": "熟悉而怀念的面孔" }
+    ]
+  },
+  {
+    "word": "花鳥風月",
+    "pronunciation": "kachou fuugetsu",
+    "definitionCn": "自然美景，风花雪月",
+    "definitionEn": "the beauties of nature; flowers, birds, wind, and moon",
+    "partOfSpeech": "n.",
+    "difficulty": "N1",
+    "examples": [
+      { "en": "日本の詩歌には花鳥風月を詠んだ作品が多い (nihon no shiika ni wa kachou fuugetsu wo yonda sakuhin ga ooi)", "cn": "日本的诗歌中有很多咏叹自然美景的作品。" },
+      { "en": "庭園を眺めながら花鳥風月を楽しむ (teien wo nagamenagara kachou fuugetsu wo tanoshimu)", "cn": "一边眺望庭院一边欣赏花鸟风月。" }
+    ],
+    "collocations": [
+      { "phrase": "花鳥風月を愛でる (kachou fuugetsu wo mederu)", "meaning": "欣赏自然之美" },
+      { "phrase": "花鳥風月の趣 (kachou fuugetsu no omomuki)", "meaning": "风花雪月的雅趣" }
+    ]
   }
 ]

@@ -170,7 +170,7 @@ class _PianoPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final whitePaint = Paint()
-      ..color = const Color(0xFFD5D5D5)
+      ..color = const Color(0xFFEEEEEE)
       ..style = PaintingStyle.fill;
 
     final whiteStroke = Paint()

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static ThemeData dark(Color seedColor) => _build(Brightness.dark, seedColor);
+  static ThemeData theme(Color seedColor, Brightness brightness) =>
+      _build(brightness, seedColor);
 
   static ThemeData _build(Brightness brightness, Color seedColor) {
     final colorScheme = ColorScheme.fromSeed(
@@ -27,6 +28,11 @@ class AppTheme {
         ),
         titleLarge: GoogleFonts.notoSans(
           fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: colorScheme.onSurface,
+        ),
+        titleMedium: GoogleFonts.notoSans(
+          fontSize: 16,
           fontWeight: FontWeight.w600,
           color: colorScheme.onSurface,
         ),

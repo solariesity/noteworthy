@@ -21,7 +21,7 @@ class NoteworthyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Noteworthy',
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.dark(themeProvider.accentColor),
+          theme: AppTheme.theme(themeProvider.accentColor, themeProvider.brightness),
           home: const HomePage(),
         );
       },
