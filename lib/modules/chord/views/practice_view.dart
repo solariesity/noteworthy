@@ -133,6 +133,7 @@ class _ChordContent extends StatelessWidget {
             isCorrect: provider.isCorrect,
             answerLabel: chord.answerLabel,
             chordColor: chord.chordType.color,
+            noteNames: chord.noteNames,
           ),
           const SizedBox(height: 20),
           SizedBox(
@@ -145,7 +146,7 @@ class _ChordContent extends StatelessWidget {
                 if (n < lo) lo = n;
                 if (n > hi) hi = n;
               }
-              final rangeStart = (lo - 4).clamp(36, 80);
+              final rangeStart = (lo - 4).clamp(36, 59);
               final rangeEnd = (hi + 4).clamp(rangeStart + 25, 84);
               return PianoKeyboard(
                 startNote: rangeStart,
@@ -208,11 +209,13 @@ class _FeedbackArea extends StatelessWidget {
   final bool isCorrect;
   final String answerLabel;
   final String chordColor;
+  final String noteNames;
 
   const _FeedbackArea({
     required this.isCorrect,
     required this.answerLabel,
     required this.chordColor,
+    required this.noteNames,
   });
 
   @override
@@ -236,6 +239,13 @@ class _FeedbackArea extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(answerLabel, style: theme.textTheme.bodyMedium),
+        const SizedBox(height: 2),
+        Text(
+          '构成音：$noteNames',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
         Text(
           '色彩：$chordColor',
           style: theme.textTheme.bodySmall?.copyWith(

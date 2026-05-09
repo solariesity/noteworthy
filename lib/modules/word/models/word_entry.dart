@@ -10,6 +10,8 @@ class ExampleSentence {
       cn: json['cn'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() => {'en': en, 'cn': cn};
 }
 
 class RootComponent {
@@ -33,6 +35,13 @@ class RootComponent {
       description: json['description'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'part': part,
+    'meaning': meaning,
+    'origin': origin,
+    if (description != null) 'description': description,
+  };
 }
 
 class RootAnalysis {
@@ -49,6 +58,11 @@ class RootAnalysis {
           .toList(),
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    if (overallMeaning != null) 'overallMeaning': overallMeaning,
+    'components': components.map((c) => c.toJson()).toList(),
+  };
 }
 
 class Collocation {
@@ -63,6 +77,8 @@ class Collocation {
       meaning: json['meaning'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() => {'phrase': phrase, 'meaning': meaning};
 }
 
 class WordEntry {
@@ -107,4 +123,16 @@ class WordEntry {
           .toList(),
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'word': word,
+    'pronunciation': pronunciation,
+    'definitionCn': definitionCn,
+    'definitionEn': definitionEn,
+    'partOfSpeech': partOfSpeech,
+    if (difficulty != null) 'difficulty': difficulty,
+    'examples': examples.map((e) => e.toJson()).toList(),
+    if (rootAnalysis != null) 'rootAnalysis': rootAnalysis!.toJson(),
+    'collocations': collocations.map((c) => c.toJson()).toList(),
+  };
 }

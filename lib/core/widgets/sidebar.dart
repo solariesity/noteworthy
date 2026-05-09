@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
@@ -11,6 +12,10 @@ class Sidebar extends StatelessWidget {
     required this.selectedIndex,
     required this.onChanged,
   });
+
+  static void _startDrag() {
+    if (Platform.isWindows) windowManager.startDragging();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +35,12 @@ class Sidebar extends StatelessWidget {
         children: [
           GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onPanStart: (_) => windowManager.startDragging(),
+            onPanStart: (_) => _startDrag(),
             child: const SizedBox(height: 16),
           ),
           GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onPanStart: (_) => windowManager.startDragging(),
+            onPanStart: (_) => _startDrag(),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
@@ -58,20 +63,20 @@ class Sidebar extends StatelessWidget {
           const Divider(indent: 12, endIndent: 12, height: 1),
           const SizedBox(height: 6),
           _NavItem(
-            icon: Icons.text_fields,
-            label: '词',
+            icon: Icons.home,
+            label: '主页',
             selected: selectedIndex == 0,
             onTap: () => onChanged(0),
           ),
           _NavItem(
-            icon: Icons.piano,
-            label: '弦',
+            icon: Icons.text_fields,
+            label: '词',
             selected: selectedIndex == 1,
             onTap: () => onChanged(1),
           ),
           _NavItem(
-            icon: Icons.menu_book,
-            label: '单词本',
+            icon: Icons.piano,
+            label: '弦',
             selected: selectedIndex == 2,
             onTap: () => onChanged(2),
           ),
@@ -85,7 +90,7 @@ class Sidebar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 20),
             child: Text(
-              'v0.3.0',
+              'v0.4.1',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

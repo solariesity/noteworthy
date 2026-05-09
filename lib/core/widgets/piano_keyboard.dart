@@ -170,11 +170,11 @@ class _PianoPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final whitePaint = Paint()
-      ..color = const Color(0xFF2D2D2D)
+      ..color = const Color(0xFFD5D5D5)
       ..style = PaintingStyle.fill;
 
     final whiteStroke = Paint()
-      ..color = const Color(0xFF555555)
+      ..color = const Color(0xFFAAAAAA)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.5;
 
@@ -234,7 +234,7 @@ class _PianoPainter extends CustomPainter {
             style: TextStyle(
               color: highlightedNotes.contains(note)
                   ? const Color(0xFFFFFFFF)
-                  : const Color(0xFF888888),
+                  : const Color(0xFF555555),
               fontSize: 11,
               fontWeight: FontWeight.w500,
             ),

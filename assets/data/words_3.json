@@ -1,0 +1,41 @@
+[
+  {
+    "word": "ephemeral",
+    "pronunciation": "/ɪˈfem.ər.əl/",
+    "definitionCn": "短暂的，转瞬即逝的",
+    "definitionEn": "lasting for a very short time",
+    "partOfSpeech": "adj.",
+    "difficulty": "B2",
+    "examples": [
+      { "en": "Fame is ephemeral.", "cn": "名声是短暂的。" },
+      { "en": "The ephemeral beauty of cherry blossoms draws crowds every spring.", "cn": "樱花转瞬即逝的美每年春天都吸引着人群。" }
+    ],
+    "rootAnalysis": {
+      "overallMeaning": "lasting only for a day",
+      "components": [
+        { "part": "epi-", "meaning": "upon, on", "origin": "Greek", "description": "" },
+        { "part": "hemera", "meaning": "day", "origin": "Greek", "description": "" },
+        { "part": "-al", "meaning": "adjective suffix", "origin": "Latin", "description": "" }
+      ]
+    },
+    "collocations": [
+      { "phrase": "ephemeral beauty", "meaning": "转瞬即逝的美" },
+      { "phrase": "ephemeral nature", "meaning": "短暂的本质" }
+    ]
+  },
+  {
+    "word": "ubiquitous",
+    "pronunciation": "/juːˈbɪk.wɪ.təs/",
+    "definitionCn": "无处不在的",
+    "definitionEn": "present, appearing, or found everywhere",
+    "partOfSpeech": "adj.",
+    "difficulty": "C1",
+    "examples": [
+      { "en": "Smartphones have become ubiquitous in modern life.", "cn": "智能手机在现代生活中已无处不在。" }
+    ],
+    "collocations": [
+      { "phrase": "ubiquitous presence", "meaning": "无处不在的存在" },
+      { "phrase": "ubiquitous computing", "meaning": "普适计算" }
+    ]
+  }
+]

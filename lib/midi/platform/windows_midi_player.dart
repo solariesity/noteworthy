@@ -1,8 +1,41 @@
 import 'dart:ffi';
-import 'package:ffi/ffi.dart' show calloc;
-import 'package:win32/win32.dart';
+import 'package:ffi/ffi.dart';
 import '../models/midi_message.dart';
 import '../services/midi_player.dart';
+
+final _winmm = DynamicLibrary.open('winmm.dll');
+
+typedef _MidiOutGetNumDevsC = Uint32 Function();
+typedef _MidiOutGetNumDevsDart = int Function();
+
+typedef _MidiOutOpenC = Int32 Function(
+  Pointer<IntPtr>, Int32, IntPtr, IntPtr, Int32,
+);
+typedef _MidiOutOpenDart = int Function(
+  Pointer<IntPtr>, int, int, int, int,
+);
+
+typedef _MidiOutShortMsgC = Int32 Function(IntPtr, Uint32);
+typedef _MidiOutShortMsgDart = int Function(int, int);
+
+typedef _MidiOutCloseC = Int32 Function(IntPtr);
+typedef _MidiOutCloseDart = int Function(int);
+
+final _midiOutGetNumDevs = _winmm
+    .lookupFunction<_MidiOutGetNumDevsC, _MidiOutGetNumDevsDart>(
+        'midiOutGetNumDevs');
+
+final _midiOutOpen =
+    _winmm.lookupFunction<_MidiOutOpenC, _MidiOutOpenDart>('midiOutOpen');
+
+final _midiOutShortMsg = _winmm
+    .lookupFunction<_MidiOutShortMsgC, _MidiOutShortMsgDart>(
+        'midiOutShortMsg');
+
+final _midiOutClose =
+    _winmm.lookupFunction<_MidiOutCloseC, _MidiOutCloseDart>('midiOutClose');
+
+const _mmsyserrNoerror = 0;
 
 class WindowsMidiPlayer extends MidiPlayer {
   int _deviceHandle = 0;
@@ -12,15 +45,15 @@ class WindowsMidiPlayer extends MidiPlayer {
   Future<void> initialize() async {
     if (_initialized) return;
 
-    final numDevs = midiOutGetNumDevs();
+    final numDevs = _midiOutGetNumDevs();
     if (numDevs == 0) {
       _initialized = false;
       return;
     }
 
     final hMidiOut = calloc.allocate<IntPtr>(sizeOf<IntPtr>());
-    final result = midiOutOpen(hMidiOut, -1, 0, 0, 0);
-    if (result != MMSYSERR_NOERROR) {
+    final result = _midiOutOpen(hMidiOut, -1, 0, 0, 0);
+    if (result != _mmsyserrNoerror) {
       calloc.free(hMidiOut);
       return;
     }
@@ -35,24 +68,27 @@ class WindowsMidiPlayer extends MidiPlayer {
   bool get isAvailable => _initialized;
 
   @override
-  void noteOn({required int channel, required int note, int velocity = 100}) {
+  void noteOn(
+      {required int channel, required int note, int velocity = 100}) {
     if (!_initialized) return;
-    final msg = MidiMessage.noteOn(channel: channel, note: note, velocity: velocity);
-    midiOutShortMsg(_deviceHandle, msg.toWin32Dword());
+    final msg =
+        MidiMessage.noteOn(channel: channel, note: note, velocity: velocity);
+    _midiOutShortMsg(_deviceHandle, msg.toWin32Dword());
   }
 
   @override
   void noteOff({required int channel, required int note}) {
     if (!_initialized) return;
     final msg = MidiMessage.noteOff(channel: channel, note: note);
-    midiOutShortMsg(_deviceHandle, msg.toWin32Dword());
+    _midiOutShortMsg(_deviceHandle, msg.toWin32Dword());
   }
 
   @override
   void programChange({required int channel, required int program}) {
     if (!_initialized) return;
-    final msg = MidiMessage.programChange(channel: channel, program: program);
-    midiOutShortMsg(_deviceHandle, msg.toWin32Dword());
+    final msg =
+        MidiMessage.programChange(channel: channel, program: program);
+    _midiOutShortMsg(_deviceHandle, msg.toWin32Dword());
   }
 
   @override
@@ -67,7 +103,7 @@ class WindowsMidiPlayer extends MidiPlayer {
   void dispose() {
     if (!_initialized) return;
     allNotesOff();
-    midiOutClose(_deviceHandle);
+    _midiOutClose(_deviceHandle);
     _initialized = false;
   }
 }

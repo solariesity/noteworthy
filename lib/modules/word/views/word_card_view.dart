@@ -6,7 +6,9 @@ import '../providers/word_provider.dart';
 import '../models/word_entry.dart';
 
 class WordCardView extends StatelessWidget {
-  const WordCardView({super.key});
+  final VoidCallback? onBack;
+
+  const WordCardView({super.key, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,18 @@ class WordCardView extends StatelessWidget {
         return SafeArea(
           child: Column(
             children: [
+              if (onBack != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: onBack,
+                      ),
+                    ],
+                  ),
+                ),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
