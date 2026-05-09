@@ -106,9 +106,8 @@ class _WordContent extends StatelessWidget {
             const SizedBox(width: 10),
             Text(
               word.partOfSpeech,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -126,21 +125,21 @@ class _WordContent extends StatelessWidget {
           style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
         ),
         if (word.examples.isNotEmpty) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: 24),
           _DividerLine(),
-          const SizedBox(height: 10),
+          const SizedBox(height: 18),
           _ExamplesContent(examples: word.examples),
         ],
         if (word.rootAnalysis != null) ...[
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           _DividerLine(),
-          const SizedBox(height: 10),
+          const SizedBox(height: 18),
           _RootContent(root: word.rootAnalysis!),
         ],
         if (word.collocations.isNotEmpty) ...[
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           _DividerLine(),
-          const SizedBox(height: 10),
+          const SizedBox(height: 18),
           _CollocationsContent(collocations: word.collocations),
         ],
       ],
@@ -170,15 +169,27 @@ class _ExamplesContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: examples.map((e) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Column(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(e.en, style: theme.textTheme.bodyMedium),
-            Text(
-              e.cn,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+            Padding(
+              padding: const EdgeInsets.only(top: 3, right: 8),
+              child: Icon(Icons.auto_awesome,
+                  size: 14, color: theme.colorScheme.primary.withValues(alpha: 0.5)),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(e.en, style: theme.textTheme.bodyMedium),
+                  Text(
+                    e.cn,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -239,10 +250,15 @@ class _CollocationsContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: collocations.map((c) => Padding(
-        padding: const EdgeInsets.only(bottom: 6),
+        padding: const EdgeInsets.only(bottom: 8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2, right: 8),
+              child: Icon(Icons.auto_awesome,
+                  size: 12, color: theme.colorScheme.primary.withValues(alpha: 0.5)),
+            ),
             Text(
               c.phrase,
               style: theme.textTheme.bodySmall?.copyWith(

@@ -46,7 +46,8 @@ class Sidebar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 children: [
-                  Icon(Icons.music_note, size: 18, color: theme.colorScheme.primary),
+                  Image.asset('assets/icon/sidebar_icon.png',
+                      width: 20, height: 20, color: theme.colorScheme.primary),
                   const SizedBox(width: 10),
                   Text(
                     'Noteworthy',

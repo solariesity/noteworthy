@@ -51,7 +51,7 @@ class _HomeViewState extends State<HomeView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('主页', style: theme.textTheme.headlineMedium),
-            const Spacer(flex: 2),
+            const Spacer(flex: 1),
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -121,28 +121,40 @@ class _HomeViewState extends State<HomeView> {
                       ],
                       if (dailyWord.collocations.isNotEmpty) ...[
                         const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: dailyWord.collocations.map((c) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primaryContainer
-                                    .withValues(alpha: 0.4),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                '${c.phrase}  ${c.meaning}',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color:
-                                      theme.colorScheme.onPrimaryContainer,
+                        ...dailyWord.collocations.map((c) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.primaryContainer
+                                        .withValues(alpha: 0.4),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    c.phrase,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: theme.colorScheme.onPrimaryContainer,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    c.meaning,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
                       ],
                     ],
                   ),

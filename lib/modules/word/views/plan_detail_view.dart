@@ -65,9 +65,19 @@ class _PlanDetailViewState extends State<PlanDetailView> {
                           _showDeleteConfirm(plan);
                         }
                       },
-                      itemBuilder: (_) => [
-                        const PopupMenuItem(value: 'edit', child: Text('编辑计划')),
-                        const PopupMenuItem(value: 'delete', child: Text('删除计划')),
+                      itemBuilder: (ctx) => [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Text('编辑计划',
+                              style: TextStyle(
+                                  color: Theme.of(ctx).colorScheme.onSurface)),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text('删除计划',
+                              style: TextStyle(
+                                  color: Theme.of(ctx).colorScheme.error)),
+                        ),
                       ],
                     ),
                   ],
@@ -132,50 +142,73 @@ class _PlanDetailViewState extends State<PlanDetailView> {
                             ],
                           ),
                         )
-                      : ListView.builder(
-                          itemCount: plan.words.length,
-                          itemBuilder: (context, index) {
-                            final word = plan.words[index];
-                            return Card(
-                              child: ListTile(
-                                title: Row(
-                                  children: [
-                                    Text(
-                                      word.word,
-                                      style: theme.textTheme.bodyLarge?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                      : Builder(
+                          builder: (context) {
+                            final planProvider = context.read<PlanProvider>();
+                            final pairs = plan.words.asMap().entries.toList();
+                            // Favorited words first
+                            pairs.sort((a, b) {
+                              final aFav = planProvider.isFavorited(a.value.word);
+                              final bFav = planProvider.isFavorited(b.value.word);
+                              return bFav ? 1 : (aFav ? -1 : 0);
+                            });
+
+                            return ListView.builder(
+                              itemCount: pairs.length,
+                              itemBuilder: (context, index) {
+                                final pair = pairs[index];
+                                final originalIndex = pair.key;
+                                final word = pair.value;
+                                final favorited = planProvider.isFavorited(word.word);
+
+                                return Card(
+                                  child: ListTile(
+                                    leading: favorited
+                                        ? Icon(Icons.star,
+                                            size: 18, color: Colors.amber.shade700)
+                                        : null,
+                                    title: Row(
+                                      children: [
+                                        Text(
+                                          word.word,
+                                          style: theme.textTheme.bodyLarge?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          word.partOfSpeech,
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            color: theme.colorScheme.primary,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      word.partOfSpeech,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.colorScheme.primary,
-                                      ),
+                                    subtitle: Text(
+                                      word.definitionCn,
+                                      style: theme.textTheme.bodySmall,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ],
-                                ),
-                                subtitle: Text(
-                                  word.definitionCn,
-                                  style: theme.textTheme.bodySmall,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                trailing: IconButton(
-                                  icon: Icon(
-                                    Icons.delete_outline,
-                                    size: 18,
-                                    color: theme.colorScheme.error,
+                                    trailing: favorited
+                                        ? null
+                                        : IconButton(
+                                            icon: Icon(
+                                              Icons.delete_outline,
+                                              size: 18,
+                                              color: theme.colorScheme.error,
+                                            ),
+                                            onPressed: () {
+                                              context.read<PlanProvider>().deleteWord(
+                                                widget.planId,
+                                                originalIndex,
+                                              );
+                                              _refresh();
+                                            },
+                                          ),
                                   ),
-                                  onPressed: () {
-                                    context.read<PlanProvider>().deleteWord(
-                                      widget.planId,
-                                      index,
-                                    );
-                                    _refresh();
-                                  },
-                                ),
-                              ),
+                                );
+                              },
                             );
                           },
                         ),
