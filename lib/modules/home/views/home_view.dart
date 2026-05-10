@@ -3,6 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../word/providers/word_provider.dart';
 
+class _TimePeriod {
+  final String greeting;
+  final IconData icon;
+  final Color color;
+  const _TimePeriod(this.greeting, this.icon, this.color);
+}
+
+_TimePeriod _periodFromHour(int hour) {
+  if (hour >= 5 && hour < 7)  return const _TimePeriod('清晨好', Icons.wb_twilight,  Color(0xFFF4A460));
+  if (hour >= 7 && hour < 12) return const _TimePeriod('上午好', Icons.wb_sunny,    Color(0xFFFFB74D));
+  if (hour >= 12 && hour < 17) return const _TimePeriod('下午好', Icons.wb_sunny,  Color(0xFFFFA726));
+  if (hour >= 17 && hour < 19) return const _TimePeriod('傍晚好', Icons.wb_twilight,  Color(0xFFE57373));
+  return const _TimePeriod('晚上好', Icons.nights_stay, Color(0xFF5C6BC0));
+}
+
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
@@ -17,7 +32,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _timer = Timer.periodic(const Duration(minutes: 1), (_) {
       setState(() => _now = DateTime.now());
     });
   }
@@ -31,12 +46,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final hour = _now.hour.toString().padLeft(2, '0');
-    final minute = _now.minute.toString().padLeft(2, '0');
-    final second = _now.second.toString().padLeft(2, '0');
-    final year = _now.year;
-    final month = _now.month.toString().padLeft(2, '0');
-    final day = _now.day.toString().padLeft(2, '0');
+    final period = _periodFromHour(_now.hour);
 
     final words = context.read<WordProvider>().allWords;
     // 基于 dayOfYear 取模，实现"每日一词"确定性切换
@@ -57,21 +67,9 @@ class _HomeViewState extends State<HomeView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    '$hour:$minute:$second',
-                    style: theme.textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.w200,
-                      letterSpacing: 4,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '$year-$month-$day',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
+                  Icon(period.icon, size: 120, color: period.color),
+                  const SizedBox(height: 20),
+                  Text(period.greeting, style: theme.textTheme.titleLarge),
                 ],
               ),
             ),
