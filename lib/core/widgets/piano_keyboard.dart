@@ -130,14 +130,29 @@ class PianoKeyboard extends StatelessWidget {
     final whiteIndex = (x / whiteKeyWidth).floor();
     if (whiteIndex < 0 || whiteIndex >= whiteNotes.length) return null;
 
-    // Check black keys first (they sit on top)
+    // Black keys sit on top — check them first.
+    // A black key straddles two white keys: its left half overlaps the white key
+    // to its left, its right half overlaps the white key to its right. So when
+    // hit-testing within whiteIndex's column, we need to consider both the
+    // black key on its right (blackNotes[whiteIndex]) AND the black key on its
+    // left (blackNotes[whiteIndex - 1]).
     if (y < blackKeyHeight) {
-      final blackNote = blackNotes[whiteIndex];
-      if (blackNote != null) {
-        final leftEdge = (whiteIndex + 1) * whiteKeyWidth - blackKeyWidth / 2;
-        final rightEdge = leftEdge + blackKeyWidth;
-        if (x >= leftEdge && x <= rightEdge) {
-          return blackNote;
+      // Right-side black key (center sits on the right edge of this white key).
+      final rightBlack = blackNotes[whiteIndex];
+      if (rightBlack != null) {
+        final center = (whiteIndex + 1) * whiteKeyWidth;
+        if (x >= center - blackKeyWidth / 2 && x <= center + blackKeyWidth / 2) {
+          return rightBlack;
+        }
+      }
+      // Left-side black key (center sits on the left edge of this white key).
+      if (whiteIndex > 0) {
+        final leftBlack = blackNotes[whiteIndex - 1];
+        if (leftBlack != null) {
+          final center = whiteIndex * whiteKeyWidth;
+          if (x >= center - blackKeyWidth / 2 && x <= center + blackKeyWidth / 2) {
+            return leftBlack;
+          }
         }
       }
     }

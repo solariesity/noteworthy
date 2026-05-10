@@ -70,13 +70,13 @@ class _PlanDetailViewState extends State<PlanDetailView> {
                           value: 'edit',
                           child: Text('编辑计划',
                               style: TextStyle(
-                                  color: Theme.of(ctx).colorScheme.onSurface)),
+                                  color: theme.colorScheme.onSurface)),
                         ),
                         PopupMenuItem(
                           value: 'delete',
                           child: Text('删除计划',
                               style: TextStyle(
-                                  color: Theme.of(ctx).colorScheme.error)),
+                                  color: theme.colorScheme.error)),
                         ),
                       ],
                     ),
@@ -234,7 +234,8 @@ class _PlanDetailViewState extends State<PlanDetailView> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('编辑计划'),
+        title: Text('编辑计划',
+            style: Theme.of(ctx).textTheme.titleLarge),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -278,7 +279,8 @@ class _PlanDetailViewState extends State<PlanDetailView> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('删除计划'),
+        title: Text('删除计划',
+            style: Theme.of(context).textTheme.titleLarge),
         content: Text('确定要删除「${plan.name}」吗？\n此操作不可撤销。'),
         actions: [
           TextButton(

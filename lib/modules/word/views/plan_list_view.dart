@@ -101,7 +101,8 @@ class PlanListView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('新建计划'),
+        title: Text('新建计划',
+            style: Theme.of(ctx).textTheme.titleLarge),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

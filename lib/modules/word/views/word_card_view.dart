@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/widgets/noteful_card.dart';
 import '../../../core/widgets/action_button.dart';
 import '../providers/word_provider.dart';
 import '../providers/plan_provider.dart';
@@ -37,8 +36,8 @@ class WordCardView extends StatelessWidget {
                 ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: NotefulCard(child: _WordContent(word: word)),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  child: _WordContent(word: word),
                 ),
               ),
               Padding(
@@ -106,40 +105,40 @@ class _WordContent extends StatelessWidget {
             const SizedBox(width: 10),
             Text(
               word.partOfSpeech,
-              style: theme.textTheme.titleMedium?.copyWith(
+              style: theme.textTheme.titleLarge?.copyWith(
                 color: theme.colorScheme.primary,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 6),
         Text(
           word.pronunciation,
-          style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+          style: theme.textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic),
         ),
-        const SizedBox(height: 14),
-        Text(word.definitionCn, style: theme.textTheme.bodyLarge),
-        const SizedBox(height: 4),
+        const SizedBox(height: 22),
+        Text(word.definitionCn, style: theme.textTheme.titleMedium),
+        const SizedBox(height: 6),
         Text(
           word.definitionEn,
-          style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+          style: theme.textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic),
         ),
         if (word.examples.isNotEmpty) ...[
-          const SizedBox(height: 24),
+          const SizedBox(height: 36),
           _DividerLine(),
-          const SizedBox(height: 18),
+          const SizedBox(height: 28),
           _ExamplesContent(examples: word.examples),
         ],
         if (word.rootAnalysis != null) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 32),
           _DividerLine(),
-          const SizedBox(height: 18),
+          const SizedBox(height: 28),
           _RootContent(root: word.rootAnalysis!),
         ],
         if (word.collocations.isNotEmpty) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 32),
           _DividerLine(),
-          const SizedBox(height: 18),
+          const SizedBox(height: 28),
           _CollocationsContent(collocations: word.collocations),
         ],
       ],
@@ -151,7 +150,7 @@ class _DividerLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Divider(
-      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.15),
+      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
       height: 1,
     );
   }
@@ -169,12 +168,12 @@ class _ExamplesContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: examples.map((e) => Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 16),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 3, right: 8),
+              padding: const EdgeInsets.only(top: 3, right: 10),
               child: Icon(Icons.auto_awesome,
                   size: 14, color: theme.colorScheme.primary.withValues(alpha: 0.5)),
             ),
@@ -182,10 +181,11 @@ class _ExamplesContent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(e.en, style: theme.textTheme.bodyMedium),
+                  Text(e.en, style: theme.textTheme.bodyLarge),
+                  const SizedBox(height: 2),
                   Text(
                     e.cn,
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
@@ -215,14 +215,14 @@ class _RootContent extends StatelessWidget {
           spacing: 8,
           runSpacing: 6,
           children: root.components.map((c) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: theme.colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               '${c.part}  ${c.meaning}',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: theme.colorScheme.onPrimaryContainer,
               ),
@@ -230,8 +230,8 @@ class _RootContent extends StatelessWidget {
           )).toList(),
         ),
         if (root.overallMeaning != null) ...[
-          const SizedBox(height: 6),
-          Text(root.overallMeaning!, style: theme.textTheme.bodySmall),
+          const SizedBox(height: 8),
+          Text(root.overallMeaning!, style: theme.textTheme.bodyMedium),
         ],
       ],
     );
@@ -250,27 +250,27 @@ class _CollocationsContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: collocations.map((c) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.only(bottom: 14),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 2, right: 8),
+              padding: const EdgeInsets.only(top: 3, right: 10),
               child: Icon(Icons.auto_awesome,
-                  size: 12, color: theme.colorScheme.primary.withValues(alpha: 0.5)),
+                  size: 14, color: theme.colorScheme.primary.withValues(alpha: 0.5)),
             ),
             Text(
               c.phrase,
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: theme.colorScheme.primary,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             Expanded(
               child: Text(
                 c.meaning,
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),

@@ -13,6 +13,7 @@ class WordService {
 
   Future<void> initialize() async {
     try {
+      // 尝试加载 assets/data/words.json，文件不存在时回退到 sampleWords
       final jsonString = await rootBundle.loadString('assets/data/words.json');
       final List<dynamic> jsonList = json.decode(jsonString);
       _words.addAll(

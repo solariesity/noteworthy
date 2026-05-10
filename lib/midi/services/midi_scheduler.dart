@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'midi_player.dart';
 
+// 定时播放 MIDI 音符序列：noteOn 后经过 durationMs 自动 noteOff
 class MidiScheduler {
   final MidiPlayer _player;
   Timer? _offTimer;

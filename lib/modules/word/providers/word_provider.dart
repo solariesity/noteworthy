@@ -33,6 +33,7 @@ class WordProvider extends ChangeNotifier {
       _shuffledIndices = [];
       _planPosition = 0;
     } else {
+      // 打乱索引顺序，每次 nextWord 按序取，一轮结束后重新打乱
       _shuffledIndices = List.generate(words.length, (i) => i)..shuffle(Random());
       _planPosition = 0;
       _currentWord = words[_shuffledIndices[0]];

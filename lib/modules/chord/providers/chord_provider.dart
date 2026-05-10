@@ -30,7 +30,7 @@ class ChordProvider extends ChangeNotifier {
 
   void nextChord() {
     if (_debounceTimer?.isActive == true) return;
-    _debounceTimer = Timer(const Duration(milliseconds: 300), () {});
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {}); // 防连点，避免快速切换
 
     _currentChord = _generator.generate();
     _selectedAnswer = null;

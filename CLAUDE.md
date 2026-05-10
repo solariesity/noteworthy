@@ -4,6 +4,13 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
+## 语言偏好
+
+- 与用户的对话沟通使用中文（解释、询问、确认等）
+- 代码、命令、技术术语保持英文
+- 申请权限时用中文说明要做什么，命令部分保持英文
+- 对于没有 description 参数的工具（如 Edit、Write、Glob、Grep 等），在调用前先口头用中文说明要做什么
+
 ## 1. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
@@ -63,9 +70,3 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
-
-## 5. 语言偏好
-
-- 与用户的对话沟通使用中文（解释、询问、确认等）
-- 代码、命令、技术术语保持英文
-- 申请权限时用中文说明要做什么，命令部分保持英文

@@ -3,6 +3,7 @@ import 'package:ffi/ffi.dart';
 import '../models/midi_message.dart';
 import '../services/midi_player.dart';
 
+// winmm.dll 的 FFI 绑定：通过 midiOutShortMsg 发送 MIDI 消息
 final _winmm = DynamicLibrary.open('winmm.dll');
 
 typedef _MidiOutGetNumDevsC = Uint32 Function();

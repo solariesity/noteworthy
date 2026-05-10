@@ -39,6 +39,7 @@ class _HomeViewState extends State<HomeView> {
     final day = _now.day.toString().padLeft(2, '0');
 
     final words = context.read<WordProvider>().allWords;
+    // 基于 dayOfYear 取模，实现"每日一词"确定性切换
     final dayOfYear = DateTime(_now.year, _now.month, _now.day)
         .difference(DateTime(_now.year, 1, 1))
         .inDays;
