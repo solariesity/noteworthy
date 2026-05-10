@@ -113,6 +113,39 @@ class _SettingsViewState extends State<SettingsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text('字体大小', style: theme.textTheme.titleMedium),
+                          const SizedBox(height: 12),
+                          Consumer<ThemeProvider>(
+                            builder: (context, provider, _) {
+                              return Row(
+                                children: [
+                                  Text('小', style: theme.textTheme.bodySmall),
+                                  Expanded(
+                                    child: Slider(
+                                      value: provider.fontSizeLevel.toDouble(),
+                                      min: 0,
+                                      max: 3,
+                                      divisions: 3,
+                                      onChanged: (v) => provider.setFontSizeLevel(v.round()),
+                                    ),
+                                  ),
+                                  Text('大', style: theme.textTheme.bodySmall),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    clipBehavior: Clip.antiAlias,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text('全局快捷键', style: theme.textTheme.titleMedium),
                           const SizedBox(height: 12),
                           Row(

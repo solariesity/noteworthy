@@ -31,10 +31,12 @@ class ThemeProvider extends ChangeNotifier {
   Color _accentColor = themeAccents[0].color;
   Brightness _brightness = themeAccents[0].brightness;
   int _index = 0;
+  int _fontSizeLevel = 0;
 
   Color get accentColor => _accentColor;
   Brightness get brightness => _brightness;
   int get selectedIndex => _index;
+  int get fontSizeLevel => _fontSizeLevel;
 
   Future<void> initialize() async {
     try {
@@ -43,6 +45,7 @@ class ThemeProvider extends ChangeNotifier {
       if (await file.exists()) {
         final map = json.decode(await file.readAsString()) as Map<String, dynamic>;
         _index = map['index'] as int? ?? 0;
+        _fontSizeLevel = map['fontSizeLevel'] as int? ?? 0;
         _updateSelection();
       }
     } catch (_) {}
@@ -54,11 +57,24 @@ class ThemeProvider extends ChangeNotifier {
     _index = index;
     _updateSelection();
     notifyListeners();
+    await _save();
+  }
 
+  Future<void> setFontSizeLevel(int level) async {
+    if (level < 0 || level > 3) return;
+    _fontSizeLevel = level;
+    notifyListeners();
+    await _save();
+  }
+
+  Future<void> _save() async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final file = File('${appDir.path}/theme.json');
-      await file.writeAsString(json.encode({'index': index}));
+      await file.writeAsString(json.encode({
+        'index': _index,
+        'fontSizeLevel': _fontSizeLevel,
+      }));
     } catch (_) {}
   }
 

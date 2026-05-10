@@ -11,6 +11,8 @@ import 'modules/word/views/word_hub_view.dart';
 import 'modules/chord/views/chord_hub_view.dart';
 import 'modules/settings/views/settings_view.dart';
 
+double _fontScaleFromLevel(int level) => const [1.0, 1.12, 1.24, 1.36][level.clamp(0, 3)];
+
 class NoteworthyApp extends StatelessWidget {
   const NoteworthyApp({super.key});
 
@@ -18,10 +20,11 @@ class NoteworthyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, _) {
+        final scale = _fontScaleFromLevel(themeProvider.fontSizeLevel);
         return MaterialApp(
           title: 'Noteworthy',
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.theme(themeProvider.accentColor, themeProvider.brightness),
+          theme: AppTheme.theme(themeProvider.accentColor, themeProvider.brightness, fontScale: scale),
           home: const HomePage(),
         );
       },
