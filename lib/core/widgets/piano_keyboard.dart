@@ -152,11 +152,8 @@ class _KeyboardLayout {
     );
   }
 
-  /// 将屏幕坐标 (x, y) 映射到具体的 MIDI note。
-  ///
-  /// 黑键骑在两个白键之间，左半边压在左白键上、右半边压在右白键上。
-  /// 因此当点击落在某白键的列上方且 y < blackKeyHeight 时，需要同时检查
-  /// 它右邻黑键 (blackNotes[whiteIndex]) 与左邻黑键 (blackNotes[whiteIndex-1])。
+  /// 屏幕坐标 → MIDI 音符号。
+  /// 黑键骑在两个白键交界处，需同时检查右邻黑键和左邻黑键。
   int? hitTest(double x, double y) {
     final whiteIndex = (x / whiteKeyWidth).floor();
     if (whiteIndex < 0 || whiteIndex >= whiteNotes.length) return null;

@@ -190,7 +190,7 @@ class _SettingsViewState extends State<SettingsView> {
                           Text('关于', style: theme.textTheme.titleMedium),
                           const SizedBox(height: 12),
                           const _AboutRow('应用名称', '词弦 Noteworthy'),
-                          const _AboutRow('版本', appVersion),
+                          const _AboutRow('版本', kAppVersion),
                           const _AboutRow('框架', 'Flutter'),
                           const _AboutRow('平台', 'Windows Desktop'),
                           const SizedBox(height: 12),

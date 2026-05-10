@@ -28,6 +28,7 @@ void main() async {
     await windowManager.setMinimumSize(const Size(900, 600));
   }
 
+  // 初始化顺序有依赖：WordService → PlanStorage → FavoritesProvider
   final wordService = WordService();
   await wordService.initialize();
 

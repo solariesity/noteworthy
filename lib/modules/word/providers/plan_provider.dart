@@ -94,6 +94,7 @@ class PlanProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 加载计划 → 变换 → 保存，同时同步索引与 _currentPlan。
   Future<void> _updatePlan(String id, StudyPlan Function(StudyPlan) transform) async {
     final plan = await _storage.loadPlan(id);
     if (plan == null) return;

@@ -11,6 +11,7 @@ import 'modules/word/views/word_hub_view.dart';
 import 'modules/chord/views/chord_hub_view.dart';
 import 'modules/settings/views/settings_view.dart';
 
+// 字体缩放等级 → 倍率：默认 / 中 / 大 / 超大
 double _fontScaleFromLevel(int level) => const [1.0, 1.12, 1.24, 1.36][level.clamp(0, 3)];
 
 class NoteworthyApp extends StatelessWidget {

@@ -1,4 +1,4 @@
-const appVersion = 'v0.5.3';
+const kAppVersion = 'v0.5.3';
 
 // MIDI note numbers for octave roots (C2..C6).
 // MIDI 标准：C-1 = 0，每升八度 +12，C4 (中央 C) = 60。
