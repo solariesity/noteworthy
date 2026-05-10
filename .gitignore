@@ -45,3 +45,7 @@ release/
 *.jks
 *.keystore
 android/key.properties
+
+# Project specific
+CLAUDE.md
+start.bat
