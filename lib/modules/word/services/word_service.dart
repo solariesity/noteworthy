@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
 import '../models/word_entry.dart';
-import '../data/sample_words.dart';
+import '../models/sample_words.dart';
 
 class WordService {
   final List<WordEntry> _words = [];

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/chord_instance.dart';
 import '../services/chord_generator.dart';
-import '../../../midi/services/midi_scheduler.dart';
+import '../../midi/services/midi_scheduler.dart';
 
 enum ProgressionPlayState { idle, playing, played, revealed }
 

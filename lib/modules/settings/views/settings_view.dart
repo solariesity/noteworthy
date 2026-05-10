@@ -189,10 +189,10 @@ class _SettingsViewState extends State<SettingsView> {
                         children: [
                           Text('关于', style: theme.textTheme.titleMedium),
                           const SizedBox(height: 12),
-                          _AboutRow('应用名称', '词弦 Noteworthy', theme),
-                          _AboutRow('版本', appVersion, theme),
-                          _AboutRow('框架', 'Flutter', theme),
-                          _AboutRow('平台', 'Windows Desktop', theme),
+                          const _AboutRow('应用名称', '词弦 Noteworthy'),
+                          const _AboutRow('版本', appVersion),
+                          const _AboutRow('框架', 'Flutter'),
+                          const _AboutRow('平台', 'Windows Desktop'),
                           const SizedBox(height: 12),
                           Row(
                             children: [
@@ -340,12 +340,12 @@ class _SettingsViewState extends State<SettingsView> {
 class _AboutRow extends StatelessWidget {
   final String label;
   final String value;
-  final ThemeData theme;
 
-  const _AboutRow(this.label, this.value, this.theme);
+  const _AboutRow(this.label, this.value);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

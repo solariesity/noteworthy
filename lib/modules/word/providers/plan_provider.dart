@@ -94,17 +94,11 @@ class PlanProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePlanMeta(String id, String name, String description) async {
+  Future<void> _updatePlan(String id, StudyPlan Function(StudyPlan) transform) async {
     final plan = await _storage.loadPlan(id);
     if (plan == null) return;
 
-    final updated = StudyPlan(
-      id: plan.id,
-      name: name,
-      description: description,
-      words: plan.words,
-      createdAt: plan.createdAt,
-    );
+    final updated = transform(plan);
     await _storage.savePlan(updated);
 
     final index = _plans.indexWhere((p) => p.id == id);
@@ -117,6 +111,16 @@ class PlanProvider extends ChangeNotifier {
       _currentPlan = updated;
     }
     notifyListeners();
+  }
+
+  Future<void> updatePlanMeta(String id, String name, String description) async {
+    await _updatePlan(id, (plan) => StudyPlan(
+      id: plan.id,
+      name: name,
+      description: description,
+      words: plan.words,
+      createdAt: plan.createdAt,
+    ));
   }
 
   Future<int> importFromJson(String planId, String jsonString) async {
@@ -132,25 +136,13 @@ class PlanProvider extends ChangeNotifier {
 
     if (newWords.isEmpty) return 0;
 
-    final updated = StudyPlan(
-      id: plan.id,
-      name: plan.name,
-      description: plan.description,
-      words: [...plan.words, ...newWords],
-      createdAt: plan.createdAt,
-    );
-    await _storage.savePlan(updated);
-
-    final index = _plans.indexWhere((p) => p.id == planId);
-    if (index >= 0) {
-      _plans[index] = updated.meta;
-      await _storage.saveIndex(_plans);
-    }
-
-    if (_currentPlan?.id == planId) {
-      _currentPlan = updated;
-    }
-    notifyListeners();
+    await _updatePlan(planId, (p) => StudyPlan(
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      words: [...p.words, ...newWords],
+      createdAt: p.createdAt,
+    ));
     return newWords.length;
   }
 
@@ -185,54 +177,29 @@ class PlanProvider extends ChangeNotifier {
 
     if (newWords.isEmpty) return 0;
 
-    final updated = StudyPlan(
-      id: plan.id,
-      name: plan.name,
-      description: plan.description,
-      words: [...plan.words, ...newWords],
-      createdAt: plan.createdAt,
-    );
-    await _storage.savePlan(updated);
-
-    final index = _plans.indexWhere((p) => p.id == planId);
-    if (index >= 0) {
-      _plans[index] = updated.meta;
-      await _storage.saveIndex(_plans);
-    }
-
-    if (_currentPlan?.id == planId) {
-      _currentPlan = updated;
-    }
-    notifyListeners();
+    await _updatePlan(planId, (p) => StudyPlan(
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      words: [...p.words, ...newWords],
+      createdAt: p.createdAt,
+    ));
     return newWords.length;
   }
 
   Future<void> deleteWord(String planId, int wordIndex) async {
-    final plan = await _storage.loadPlan(planId);
-    if (plan == null || wordIndex < 0 || wordIndex >= plan.words.length) return;
-
-    final updatedWords = [...plan.words];
-    updatedWords.removeAt(wordIndex);
-
-    final updated = StudyPlan(
-      id: plan.id,
-      name: plan.name,
-      description: plan.description,
-      words: updatedWords,
-      createdAt: plan.createdAt,
-    );
-    await _storage.savePlan(updated);
-
-    final index = _plans.indexWhere((p) => p.id == planId);
-    if (index >= 0) {
-      _plans[index] = updated.meta;
-      await _storage.saveIndex(_plans);
-    }
-
-    if (_currentPlan?.id == planId) {
-      _currentPlan = updated;
-    }
-    notifyListeners();
+    await _updatePlan(planId, (plan) {
+      if (wordIndex < 0 || wordIndex >= plan.words.length) return plan;
+      final updatedWords = [...plan.words];
+      updatedWords.removeAt(wordIndex);
+      return StudyPlan(
+        id: plan.id,
+        name: plan.name,
+        description: plan.description,
+        words: updatedWords,
+        createdAt: plan.createdAt,
+      );
+    });
   }
 
   Future<StudyPlan?> loadPlan(String id) async {

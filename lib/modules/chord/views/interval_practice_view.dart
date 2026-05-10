@@ -6,7 +6,7 @@ import '../../../core/widgets/feedback_area.dart';
 import '../../../core/widgets/noteful_card.dart';
 import '../../../core/widgets/piano_keyboard.dart';
 import '../../../core/widgets/play_button.dart';
-import '../../../midi/services/midi_player.dart';
+import '../../midi/services/midi_player.dart';
 import '../providers/interval_practice_provider.dart';
 
 class IntervalPracticeView extends StatelessWidget {

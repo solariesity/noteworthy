@@ -102,7 +102,7 @@ class _ProgressionContent extends StatelessWidget {
           const SizedBox(height: 24),
           SizedBox(
             height: 200,
-            child: () {
+            child: Builder(builder: (context) {
               final rangeStart = (rootNote - 12).clamp(36, 60);
               final rangeEnd = (rootNote + 12).clamp(rangeStart + 24, 84);
               return PianoKeyboard(
@@ -110,7 +110,7 @@ class _ProgressionContent extends StatelessWidget {
                 endNote: rangeEnd,
                 highlightedNotes: {rootNote},
               );
-            }(),
+            }),
           ),
           const SizedBox(height: 20),
           if (provider.canReveal)

@@ -14,9 +14,10 @@ import 'modules/chord/services/chord_generator.dart';
 import 'modules/chord/providers/chord_provider.dart';
 import 'modules/chord/providers/interval_practice_provider.dart';
 import 'modules/chord/providers/progression_reveal_provider.dart';
-import 'midi/services/midi_scheduler.dart';
-import 'midi/services/midi_player.dart';
-import 'midi/midi_factory.dart';
+import 'modules/midi/services/midi_scheduler.dart';
+import 'modules/midi/services/midi_player.dart';
+import 'modules/midi/platform/noop_midi_player.dart'
+    if (dart.library.ffi) 'modules/midi/platform/native_midi_factory.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +45,7 @@ void main() async {
   final shortcutService = ShortcutService();
   await shortcutService.initialize();
 
-  final midiPlayer = createMidiPlayer();
+  final midiPlayer = createNativeMidiPlayer();
   await midiPlayer.initialize();
 
   runApp(

@@ -115,28 +115,19 @@ class _WordContent extends StatelessWidget {
         ),
         if (word.examples.isNotEmpty) ...[
           const SizedBox(height: 36),
-          Divider(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
-                height: 1,
-              ),
+          const _SectionDivider(),
           const SizedBox(height: 28),
           _ExamplesContent(examples: word.examples),
         ],
         if (word.rootAnalysis != null) ...[
           const SizedBox(height: 32),
-          Divider(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
-                height: 1,
-              ),
+          const _SectionDivider(),
           const SizedBox(height: 28),
           _RootContent(root: word.rootAnalysis!),
         ],
         if (word.collocations.isNotEmpty) ...[
           const SizedBox(height: 32),
-          Divider(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
-                height: 1,
-              ),
+          const _SectionDivider(),
           const SizedBox(height: 28),
           _CollocationsContent(collocations: word.collocations),
         ],
@@ -223,6 +214,18 @@ class _RootContent extends StatelessWidget {
           Text(root.overallMeaning!, style: theme.textTheme.bodyMedium),
         ],
       ],
+    );
+  }
+}
+
+class _SectionDivider extends StatelessWidget {
+  const _SectionDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
+      height: 1,
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/piano_keyboard.dart';
 import '../../../core/widgets/back_header.dart';
-import '../../../midi/services/midi_player.dart';
+import '../../midi/services/midi_player.dart';
 
 class FreePlayView extends StatefulWidget {
   final VoidCallback onBack;
