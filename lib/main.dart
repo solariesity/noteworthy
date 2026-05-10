@@ -8,6 +8,8 @@ import 'app.dart';
 import 'modules/word/services/word_service.dart';
 import 'modules/word/providers/word_provider.dart';
 import 'modules/word/providers/plan_provider.dart';
+import 'modules/word/providers/favorites_provider.dart';
+import 'modules/word/services/plan_storage.dart';
 import 'modules/chord/services/chord_generator.dart';
 import 'modules/chord/providers/chord_provider.dart';
 import 'modules/chord/providers/interval_practice_provider.dart';
@@ -28,8 +30,13 @@ void main() async {
   final wordService = WordService();
   await wordService.initialize();
 
-  final planProvider = PlanProvider();
+  final planStorage = PlanStorage();
+
+  final planProvider = PlanProvider(storage: planStorage);
   await planProvider.initialize();
+
+  final favoritesProvider = FavoritesProvider(planStorage);
+  await favoritesProvider.initialize();
 
   final themeProvider = ThemeProvider();
   await themeProvider.initialize();
@@ -48,6 +55,7 @@ void main() async {
           create: (_) => WordProvider(wordService)..nextWord(),
         ),
         ChangeNotifierProvider.value(value: planProvider),
+        ChangeNotifierProvider.value(value: favoritesProvider),
         ChangeNotifierProvider.value(value: themeProvider),
         Provider<ShortcutService>.value(value: shortcutService),
         ChangeNotifierProvider(

@@ -8,7 +8,9 @@ import '../services/plan_storage.dart';
 import 'word_provider.dart';
 
 class PlanProvider extends ChangeNotifier {
-  final PlanStorage _storage = PlanStorage();
+  final PlanStorage _storage;
+
+  PlanProvider({PlanStorage? storage}) : _storage = storage ?? PlanStorage();
   final Uuid _uuid = const Uuid();
 
   List<StudyPlanMeta> _plans = [];
@@ -30,7 +32,6 @@ class PlanProvider extends ChangeNotifier {
     }
 
     _activePlanId = await _storage.loadActivePlanId();
-    await _loadFavorites();
     _loaded = true;
     notifyListeners();
   }
@@ -249,101 +250,5 @@ class PlanProvider extends ChangeNotifier {
     _storage.saveActivePlanId(plan.id);
     wordProvider.loadPlanWords(plan.words);
     notifyListeners();
-  }
-
-  // --- Favorites ---
-
-  String? _favoritesPlanId;
-  Set<String> _favoriteWords = {};
-
-  Set<String> get favoriteWords => _favoriteWords;
-
-  Future<String> _ensureFavoritesPlan() async {
-    if (_favoritesPlanId != null) return _favoritesPlanId!;
-
-    // Look for existing "收藏词汇" plan
-    final fav = _plans.where((p) => p.name == '收藏词汇').firstOrNull;
-    if (fav != null) {
-      _favoritesPlanId = fav.id;
-      final plan = await _storage.loadPlan(fav.id);
-      if (plan != null) {
-        _favoriteWords = plan.words.map((w) => w.word).toSet();
-      }
-      return fav.id;
-    }
-
-    // Create new favorites plan
-    final id = _uuid.v4();
-    final plan = StudyPlan(
-      id: id,
-      name: '收藏词汇',
-      description: '',
-      words: [],
-      createdAt: DateTime.now(),
-    );
-    _plans.add(plan.meta);
-    await _storage.savePlan(plan);
-    await _storage.saveIndex(_plans);
-    _favoritesPlanId = id;
-    _favoriteWords = {};
-    notifyListeners();
-    return id;
-  }
-
-  bool isFavorited(String word) => _favoriteWords.contains(word);
-
-  Future<void> toggleFavorite(WordEntry entry) async {
-    final planId = await _ensureFavoritesPlan();
-    final plan = await _storage.loadPlan(planId);
-    if (plan == null) return;
-
-    if (_favoriteWords.contains(entry.word)) {
-      // Remove from favorites
-      _favoriteWords.remove(entry.word);
-      final updatedWords = plan.words.where((w) => w.word != entry.word).toList();
-      final updated = StudyPlan(
-        id: plan.id,
-        name: plan.name,
-        description: plan.description,
-        words: updatedWords,
-        createdAt: plan.createdAt,
-      );
-      await _storage.savePlan(updated);
-      final index = _plans.indexWhere((p) => p.id == planId);
-      if (index >= 0) {
-        _plans[index] = updated.meta;
-        await _storage.saveIndex(_plans);
-      }
-      notifyListeners();
-    } else {
-      // Add to favorites
-      _favoriteWords.add(entry.word);
-      final updated = StudyPlan(
-        id: plan.id,
-        name: plan.name,
-        description: plan.description,
-        words: [...plan.words, entry],
-        createdAt: plan.createdAt,
-      );
-      await _storage.savePlan(updated);
-      final index = _plans.indexWhere((p) => p.id == planId);
-      if (index >= 0) {
-        _plans[index] = updated.meta;
-        await _storage.saveIndex(_plans);
-      }
-      notifyListeners();
-    }
-  }
-
-  // Make _favoritesPlanId persist across restarts by loading it in initialize
-  Future<void> _loadFavorites() async {
-    final fav = _plans.where((p) => p.name == '收藏词汇').firstOrNull;
-    if (fav != null) {
-      _favoritesPlanId = fav.id;
-      final plan = await _storage.loadPlan(fav.id);
-      if (plan != null) {
-        _favoriteWords = plan.words.map((w) => w.word).toSet();
-      }
-    }
   }
 }

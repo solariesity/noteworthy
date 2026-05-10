@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../../core/widgets/back_header.dart';
 import '../providers/plan_provider.dart';
+import '../providers/favorites_provider.dart';
 import '../providers/word_provider.dart';
 import '../models/study_plan.dart';
 
@@ -140,12 +141,12 @@ class _PlanDetailViewState extends State<PlanDetailView> {
                         )
                       : Builder(
                           builder: (context) {
-                            final planProvider = context.read<PlanProvider>();
+                            final favProvider = context.read<FavoritesProvider>();
                             final pairs = plan.words.asMap().entries.toList();
                             // Favorited words first
                             pairs.sort((a, b) {
-                              final aFav = planProvider.isFavorited(a.value.word);
-                              final bFav = planProvider.isFavorited(b.value.word);
+                              final aFav = favProvider.isFavorited(a.value.word);
+                              final bFav = favProvider.isFavorited(b.value.word);
                               return bFav ? 1 : (aFav ? -1 : 0);
                             });
 
@@ -155,7 +156,7 @@ class _PlanDetailViewState extends State<PlanDetailView> {
                                 final pair = pairs[index];
                                 final originalIndex = pair.key;
                                 final word = pair.value;
-                                final favorited = planProvider.isFavorited(word.word);
+                                final favorited = favProvider.isFavorited(word.word);
 
                                 return Card(
                                   child: ListTile(

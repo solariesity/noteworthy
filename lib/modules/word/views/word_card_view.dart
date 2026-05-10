@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/widgets/action_button.dart';
 import '../../../core/widgets/back_header.dart';
 import '../providers/word_provider.dart';
-import '../providers/plan_provider.dart';
+import '../providers/favorites_provider.dart';
 import '../models/word_entry.dart';
 
 class WordCardView extends StatelessWidget {
@@ -43,11 +43,11 @@ class WordCardView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Consumer<PlanProvider>(
-                      builder: (context, planProvider, _) {
-                        final favorited = planProvider.isFavorited(word.word);
+                    Consumer<FavoritesProvider>(
+                      builder: (context, favProvider, _) {
+                        final favorited = favProvider.isFavorited(word.word);
                         return IconButton.filled(
-                          onPressed: () => planProvider.toggleFavorite(word),
+                          onPressed: () => favProvider.toggleFavorite(word.word),
                           icon: Icon(favorited ? Icons.star : Icons.star_border),
                           style: IconButton.styleFrom(
                             backgroundColor: favorited
@@ -115,33 +115,32 @@ class _WordContent extends StatelessWidget {
         ),
         if (word.examples.isNotEmpty) ...[
           const SizedBox(height: 36),
-          _DividerLine(),
+          Divider(
+                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
+                height: 1,
+              ),
           const SizedBox(height: 28),
           _ExamplesContent(examples: word.examples),
         ],
         if (word.rootAnalysis != null) ...[
           const SizedBox(height: 32),
-          _DividerLine(),
+          Divider(
+                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
+                height: 1,
+              ),
           const SizedBox(height: 28),
           _RootContent(root: word.rootAnalysis!),
         ],
         if (word.collocations.isNotEmpty) ...[
           const SizedBox(height: 32),
-          _DividerLine(),
+          Divider(
+                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
+                height: 1,
+              ),
           const SizedBox(height: 28),
           _CollocationsContent(collocations: word.collocations),
         ],
       ],
-    );
-  }
-}
-
-class _DividerLine extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Divider(
-      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
-      height: 1,
     );
   }
 }
