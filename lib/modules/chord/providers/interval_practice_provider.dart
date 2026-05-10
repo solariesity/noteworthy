@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../../core/constants.dart';
 import '../../../midi/services/midi_scheduler.dart';
 
 enum IntervalPlayState { idle, playingA, playingB, answered }
@@ -16,9 +17,16 @@ class IntervalPracticeProvider extends ChangeNotifier {
 
   IntervalPracticeProvider(this._scheduler);
 
-  static const _noteNames = [
-    'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
-  ];
+  // 出题时第一个音 (noteA) 的取值范围：[C3, C5]，即 25 个半音。
+  static const _noteARangeStart = kMidiC3; // 48
+  static const _noteARangeSpan = kMidiC5 - kMidiC3 + 1; // 25
+  // 第二个音 (noteB) 相对 noteA 的最大上下偏移（一个八度）。
+  static const _intervalMaxOffset = 12;
+
+  // 播放时长：参考音 1.2s，目标音 1.5s；每个音之后留 300ms 间隔再进入下一阶段。
+  static const _refDurationMs = 1200;
+  static const _targetDurationMs = 1500;
+  static const _gapAfterNoteMs = 300;
 
   int? get noteA => _noteA;
   int? get noteB => _noteB;
@@ -37,17 +45,17 @@ class IntervalPracticeProvider extends ChangeNotifier {
   String get answerDisplay => _noteB != null ? noteDisplay(_noteB!) : '';
 
   static String noteDisplay(int note) {
-    final name = _noteNames[note % 12];
+    final name = kNoteNames[note % 12];
     final octave = (note ~/ 12) - 1;
     return '$name$octave';
   }
 
   void nextQuestion() {
     final random = Random();
-    _noteA = 48 + random.nextInt(25); // 48-72
+    _noteA = _noteARangeStart + random.nextInt(_noteARangeSpan);
     do {
-      final offset = random.nextInt(25) - 12; // -12 to +12
-      _noteB = (_noteA! + offset).clamp(36, 84);
+      final offset = random.nextInt(_intervalMaxOffset * 2 + 1) - _intervalMaxOffset;
+      _noteB = (_noteA! + offset).clamp(kPianoMinNote, kPianoMaxNote);
     } while (_noteB == _noteA);
 
     _selectedAnswer = null;
@@ -64,16 +72,20 @@ class IntervalPracticeProvider extends ChangeNotifier {
     _state = IntervalPlayState.playingA;
     notifyListeners();
 
-    _scheduler.playChord([_noteA!], durationMs: 1200);
-    await Future.delayed(const Duration(milliseconds: 1500));
+    _scheduler.playChord([_noteA!], durationMs: _refDurationMs);
+    await Future.delayed(
+      const Duration(milliseconds: _refDurationMs + _gapAfterNoteMs),
+    );
 
     if (_state != IntervalPlayState.playingA) return;
 
     _state = IntervalPlayState.playingB;
     notifyListeners();
 
-    _scheduler.playChord([_noteB!], durationMs: 1500);
-    await Future.delayed(const Duration(milliseconds: 1800));
+    _scheduler.playChord([_noteB!], durationMs: _targetDurationMs);
+    await Future.delayed(
+      const Duration(milliseconds: _targetDurationMs + _gapAfterNoteMs),
+    );
 
     if (_state == IntervalPlayState.playingB) {
       _state = IntervalPlayState.idle;

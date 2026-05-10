@@ -1,14 +1,11 @@
 import 'dart:math';
+import '../../../core/constants.dart';
 import '../models/chord_definition.dart';
 import '../models/chord_instance.dart';
 
 class ChordGenerator {
   static const _rootRangeStart = 48;
   static const _rootRangeEnd = 72;
-
-  static const List<String> _noteNames = [
-    'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
-  ];
 
   final Random _random = Random();
 
@@ -26,7 +23,7 @@ class ChordGenerator {
 
     return ChordInstance(
       rootNote: rootNote,
-      rootName: _noteNames[rootNote % 12],
+      rootName: kNoteNames[rootNote % 12],
       chordType: chordType,
       midiNotes: midiNotes,
     );

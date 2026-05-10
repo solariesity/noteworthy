@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/widgets/noteful_card.dart';
 import '../../../core/widgets/action_button.dart';
+import '../../../core/widgets/back_header.dart';
+import '../../../core/widgets/feedback_area.dart';
+import '../../../core/widgets/noteful_card.dart';
 import '../../../core/widgets/piano_keyboard.dart';
+import '../../../core/widgets/play_button.dart';
 import '../../../midi/services/midi_player.dart';
 import '../providers/interval_practice_provider.dart';
 
@@ -24,19 +27,7 @@ class IntervalPracticeView extends StatelessWidget {
         return SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: onBack,
-                    ),
-                    const SizedBox(width: 8),
-                    Text('音程练习', style: Theme.of(context).textTheme.titleLarge),
-                  ],
-                ),
-              ),
+              BackHeader(onBack: onBack, title: '音程练习'),
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -75,10 +66,10 @@ class _IntervalContent extends StatelessWidget {
     final theme = Theme.of(context);
     final midiPlayer = context.read<MidiPlayer>();
 
-    final highlightedNotes = <int>{noteA};
-    if (provider.hasAnswered && provider.noteB != null) {
-      highlightedNotes.add(provider.noteB!);
-    }
+    final highlightedNotes = <int>{
+      noteA,
+      if (provider.hasAnswered && provider.noteB != null) provider.noteB!,
+    };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,7 +83,7 @@ class _IntervalContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        _PlayButton(
+        PlayButton(
           onPressed: provider.isPlaying ? null : () => provider.playSequence(),
           isPlaying: provider.isPlaying,
         ),
@@ -100,118 +91,38 @@ class _IntervalContent extends StatelessWidget {
           const SizedBox(height: 24),
           SizedBox(
             height: 200,
-            child: () {
-              final rangeStart = (noteA - 12).clamp(36, 60);
-              final rangeEnd = (noteA + 12).clamp(rangeStart + 24, 84);
-              return PianoKeyboard(
-                startNote: rangeStart,
-                endNote: rangeEnd,
-                highlightedNotes: highlightedNotes,
-                onKeyDown: provider.isPlaying || provider.hasAnswered
-                    ? null
-                    : (note) {
-                        midiPlayer.noteOn(channel: 0, note: note);
-                        provider.submitAnswer(
-                          IntervalPracticeProvider.noteDisplay(note),
-                        );
-                      },
-                onKeyUp: (note) {
-                  midiPlayer.noteOff(channel: 0, note: note);
-                },
-              );
-            }(),
+            child: _buildKeyboard(midiPlayer, highlightedNotes),
           ),
           if (provider.hasAnswered) ...[
             const SizedBox(height: 20),
-            _FeedbackArea(
+            FeedbackArea(
               isCorrect: provider.isCorrect,
-              answerDisplay: provider.answerDisplay,
+              extra: [
+                const SizedBox(height: 4),
+                Text('答案是：${provider.answerDisplay}',
+                    style: theme.textTheme.bodyMedium),
+              ],
             ),
           ],
         ],
       ],
     );
   }
-}
 
-class _PlayButton extends StatelessWidget {
-  final VoidCallback? onPressed;
-  final bool isPlaying;
-
-  const _PlayButton({required this.onPressed, required this.isPlaying});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return GestureDetector(
-      onTap: onPressed,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isPlaying
-              ? theme.colorScheme.primary
-              : theme.colorScheme.primaryContainer,
-          boxShadow: [
-            BoxShadow(
-              color: (isPlaying
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.primaryContainer)
-                  .withValues(alpha: 0.4),
-              blurRadius: 20,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: Icon(
-          isPlaying ? Icons.graphic_eq : Icons.play_arrow,
-          size: 40,
-          color: isPlaying
-              ? theme.colorScheme.onPrimary
-              : theme.colorScheme.onPrimaryContainer,
-        ),
-      ),
-    );
-  }
-}
-
-class _FeedbackArea extends StatelessWidget {
-  final bool isCorrect;
-  final String answerDisplay;
-
-  const _FeedbackArea({
-    required this.isCorrect,
-    required this.answerDisplay,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      children: [
-        Icon(
-          isCorrect ? Icons.check_circle : Icons.cancel,
-          size: 36,
-          color: isCorrect ? Colors.green : Colors.red,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          isCorrect ? '正确！' : '不对哦',
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: isCorrect ? Colors.green : Colors.red,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          '答案是：$answerDisplay',
-          style: theme.textTheme.bodyMedium,
-        ),
-      ],
+  Widget _buildKeyboard(MidiPlayer midiPlayer, Set<int> highlightedNotes) {
+    final (rangeStart, rangeEnd) = PianoKeyboard.rangeAround(noteA);
+    final lockTaps = provider.isPlaying || provider.hasAnswered;
+    return PianoKeyboard(
+      startNote: rangeStart,
+      endNote: rangeEnd,
+      highlightedNotes: highlightedNotes,
+      onKeyDown: lockTaps
+          ? null
+          : (note) {
+              midiPlayer.noteOn(channel: 0, note: note);
+              provider.submitAnswer(IntervalPracticeProvider.noteDisplay(note));
+            },
+      onKeyUp: (note) => midiPlayer.noteOff(channel: 0, note: note),
     );
   }
 }

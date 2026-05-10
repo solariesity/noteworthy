@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/noteful_card.dart';
 import '../../../core/widgets/action_button.dart';
+import '../../../core/widgets/back_header.dart';
 import '../../../core/widgets/piano_keyboard.dart';
+import '../../../core/widgets/play_button.dart';
 import '../providers/progression_reveal_provider.dart';
 
 class ProgressionRevealView extends StatelessWidget {
@@ -23,19 +25,7 @@ class ProgressionRevealView extends StatelessWidget {
         return SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: onBack,
-                    ),
-                    const SizedBox(width: 8),
-                    Text('和弦进行', style: Theme.of(context).textTheme.titleLarge),
-                  ],
-                ),
-              ),
+              BackHeader(onBack: onBack, title: '和弦进行'),
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -91,7 +81,7 @@ class _ProgressionContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        _PlayButton(
+        PlayButton(
           onPressed: provider.isPlaying
               ? null
               : () => provider.playProgression(),
@@ -198,46 +188,3 @@ class _ProgressionContent extends StatelessWidget {
   }
 }
 
-class _PlayButton extends StatelessWidget {
-  final VoidCallback? onPressed;
-  final bool isPlaying;
-
-  const _PlayButton({required this.onPressed, required this.isPlaying});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return GestureDetector(
-      onTap: onPressed,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isPlaying
-              ? theme.colorScheme.primary
-              : theme.colorScheme.primaryContainer,
-          boxShadow: [
-            BoxShadow(
-              color: (isPlaying
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.primaryContainer)
-                  .withValues(alpha: 0.4),
-              blurRadius: 20,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: Icon(
-          isPlaying ? Icons.graphic_eq : Icons.play_arrow,
-          size: 40,
-          color: isPlaying
-              ? theme.colorScheme.onPrimary
-              : theme.colorScheme.onPrimaryContainer,
-        ),
-      ),
-    );
-  }
-}

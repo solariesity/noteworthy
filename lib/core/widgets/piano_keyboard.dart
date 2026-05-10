@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants.dart';
 
 class PianoKeyboard extends StatelessWidget {
   final Set<int> highlightedNotes;
@@ -13,10 +14,30 @@ class PianoKeyboard extends StatelessWidget {
     this.highlightedNotes = const {},
     this.onKeyDown,
     this.onKeyUp,
-    this.startNote = 48,
-    this.endNote = 72,
+    this.startNote = kMidiC3,
+    this.endNote = kMidiC5,
     this.showLabels = true,
   });
+
+  // ===== 几何 =====
+  static const _blackKeyWidthRatio = 0.6;
+  static const _blackKeyHeightRatio = 0.6;
+  static const _whiteKeyRadius = 6.0;
+  static const _blackKeyRadius = 4.0;
+  static const _whiteKeyStrokeWidth = 0.5;
+
+  // ===== 颜色 =====
+  static const _whiteKeyColor = Color(0xFFEEEEEE);
+  static const _whiteKeyBorderColor = Color(0xFFAAAAAA);
+  static const _blackKeyColor = Color(0xFF1A1A1A);
+  static const _highlightColor = Color(0xFF5C6BC0);
+  static const _highlightAlpha = 0.6;
+
+  // ===== 标签 =====
+  static const _labelHighlightColor = Color(0xFFFFFFFF);
+  static const _labelDefaultColor = Color(0xFF555555);
+  static const _labelFontSize = 11.0;
+  static const _labelBottomPadding = 10.0;
 
   static const _noteLabels = <int, String>{
     36: 'C2', 38: 'D2', 40: 'E2', 41: 'F2', 43: 'G2', 45: 'A2', 47: 'B2',
@@ -31,84 +52,54 @@ class PianoKeyboard extends StatelessWidget {
     return n == 0 || n == 2 || n == 4 || n == 5 || n == 7 || n == 9 || n == 11;
   }
 
-  List<int> _buildWhiteNotes() {
-    final notes = <int>[];
-    for (var i = startNote; i <= endNote; i++) {
-      if (_isWhite(i)) notes.add(i);
-    }
-    return notes;
+  /// 计算覆盖 [lowNote..highNote] 这一段音的合理可视音域。
+  /// 上下各预留 [pad] 半音，且至少展示 [minSpan] 半音宽，全部 clamp 到 [kPianoMinNote..kPianoMaxNote]。
+  static (int, int) rangeForRange(
+    int lowNote,
+    int highNote, {
+    int pad = 4,
+    int minSpan = 25,
+  }) {
+    final start = (lowNote - pad).clamp(kPianoMinNote, kPianoMaxNote - minSpan);
+    final end = (highNote + pad).clamp(start + minSpan, kPianoMaxNote);
+    return (start, end);
   }
 
-  List<int?> _buildBlackNotes() {
-    final whiteNotes = _buildWhiteNotes();
-    final result = <int?>[];
-    for (final w in whiteNotes) {
-      final black = w + 1;
-      if (black <= endNote && !_isWhite(black)) {
-        result.add(black);
-      } else {
-        result.add(null);
-      }
-    }
-    return result;
-  }
+  /// 围绕单个 [centerNote] 上下扩展的便捷形式。
+  static (int, int) rangeAround(int centerNote, {int pad = 12, int minSpan = 24}) =>
+      rangeForRange(centerNote, centerNote, pad: pad, minSpan: minSpan);
 
   @override
   Widget build(BuildContext context) {
-    final whiteNotes = _buildWhiteNotes();
-    final blackNotes = _buildBlackNotes();
-
     return LayoutBuilder(
       builder: (context, constraints) {
-        final keyboardWidth = constraints.maxWidth;
-        final whiteKeyCount = whiteNotes.length;
-        final whiteKeyWidth = keyboardWidth / whiteKeyCount;
-        final blackKeyWidth = whiteKeyWidth * 0.6;
-        final whiteKeyHeight = constraints.maxHeight;
-        final blackKeyHeight = whiteKeyHeight * 0.6;
+        final layout = _KeyboardLayout.compute(
+          startNote: startNote,
+          endNote: endNote,
+          size: Size(constraints.maxWidth, constraints.maxHeight),
+        );
 
         return GestureDetector(
           onTapDown: (details) {
-            final note = _hitTest(
+            final note = layout.hitTest(
               details.localPosition.dx,
               details.localPosition.dy,
-              whiteNotes,
-              blackNotes,
-              whiteKeyWidth,
-              blackKeyWidth,
-              whiteKeyHeight,
-              blackKeyHeight,
             );
-            if (note != null) {
-              onKeyDown?.call(note);
-            }
+            if (note != null) onKeyDown?.call(note);
           },
           onTapUp: (details) {
-            final note = _hitTest(
+            final note = layout.hitTest(
               details.localPosition.dx,
               details.localPosition.dy,
-              whiteNotes,
-              blackNotes,
-              whiteKeyWidth,
-              blackKeyWidth,
-              whiteKeyHeight,
-              blackKeyHeight,
             );
-            if (note != null) {
-              onKeyUp?.call(note);
-            }
+            if (note != null) onKeyUp?.call(note);
           },
           onTapCancel: () {},
           child: CustomPaint(
-            size: Size(keyboardWidth, whiteKeyHeight),
+            size: Size(constraints.maxWidth, layout.whiteKeyHeight),
             painter: _PianoPainter(
-              whiteNotes: whiteNotes,
-              blackNotes: blackNotes,
+              layout: layout,
               highlightedNotes: highlightedNotes,
-              whiteKeyWidth: whiteKeyWidth,
-              blackKeyWidth: blackKeyWidth,
-              whiteKeyHeight: whiteKeyHeight,
-              blackKeyHeight: blackKeyHeight,
               showLabels: showLabels,
             ),
           ),
@@ -116,160 +107,184 @@ class PianoKeyboard extends StatelessWidget {
       },
     );
   }
+}
 
-  int? _hitTest(
-    double x,
-    double y,
-    List<int> whiteNotes,
-    List<int?> blackNotes,
-    double whiteKeyWidth,
-    double blackKeyWidth,
-    double whiteKeyHeight,
-    double blackKeyHeight,
-  ) {
+/// 钢琴几何布局：把白键/黑键的尺寸和命中测试集中在一起，
+/// 避免在 painter / 手势处理器之间反复传递一长串参数。
+class _KeyboardLayout {
+  final List<int> whiteNotes;
+  final List<int?> blackNotes;
+  final double whiteKeyWidth;
+  final double blackKeyWidth;
+  final double whiteKeyHeight;
+  final double blackKeyHeight;
+
+  _KeyboardLayout._({
+    required this.whiteNotes,
+    required this.blackNotes,
+    required this.whiteKeyWidth,
+    required this.blackKeyWidth,
+    required this.whiteKeyHeight,
+    required this.blackKeyHeight,
+  });
+
+  factory _KeyboardLayout.compute({
+    required int startNote,
+    required int endNote,
+    required Size size,
+  }) {
+    final whiteNotes = <int>[
+      for (var i = startNote; i <= endNote; i++)
+        if (PianoKeyboard._isWhite(i)) i,
+    ];
+    final blackNotes = <int?>[
+      for (final w in whiteNotes)
+        if (w + 1 <= endNote && !PianoKeyboard._isWhite(w + 1)) w + 1 else null,
+    ];
+    final whiteKeyWidth = size.width / whiteNotes.length;
+    return _KeyboardLayout._(
+      whiteNotes: whiteNotes,
+      blackNotes: blackNotes,
+      whiteKeyWidth: whiteKeyWidth,
+      blackKeyWidth: whiteKeyWidth * PianoKeyboard._blackKeyWidthRatio,
+      whiteKeyHeight: size.height,
+      blackKeyHeight: size.height * PianoKeyboard._blackKeyHeightRatio,
+    );
+  }
+
+  /// 将屏幕坐标 (x, y) 映射到具体的 MIDI note。
+  ///
+  /// 黑键骑在两个白键之间，左半边压在左白键上、右半边压在右白键上。
+  /// 因此当点击落在某白键的列上方且 y < blackKeyHeight 时，需要同时检查
+  /// 它右邻黑键 (blackNotes[whiteIndex]) 与左邻黑键 (blackNotes[whiteIndex-1])。
+  int? hitTest(double x, double y) {
     final whiteIndex = (x / whiteKeyWidth).floor();
     if (whiteIndex < 0 || whiteIndex >= whiteNotes.length) return null;
 
-    // Black keys sit on top — check them first.
-    // A black key straddles two white keys: its left half overlaps the white key
-    // to its left, its right half overlaps the white key to its right. So when
-    // hit-testing within whiteIndex's column, we need to consider both the
-    // black key on its right (blackNotes[whiteIndex]) AND the black key on its
-    // left (blackNotes[whiteIndex - 1]).
     if (y < blackKeyHeight) {
-      // Right-side black key (center sits on the right edge of this white key).
       final rightBlack = blackNotes[whiteIndex];
-      if (rightBlack != null) {
-        final center = (whiteIndex + 1) * whiteKeyWidth;
-        if (x >= center - blackKeyWidth / 2 && x <= center + blackKeyWidth / 2) {
-          return rightBlack;
-        }
+      if (rightBlack != null && _hitsBlackKeyAt(x, (whiteIndex + 1) * whiteKeyWidth)) {
+        return rightBlack;
       }
-      // Left-side black key (center sits on the left edge of this white key).
       if (whiteIndex > 0) {
         final leftBlack = blackNotes[whiteIndex - 1];
-        if (leftBlack != null) {
-          final center = whiteIndex * whiteKeyWidth;
-          if (x >= center - blackKeyWidth / 2 && x <= center + blackKeyWidth / 2) {
-            return leftBlack;
-          }
+        if (leftBlack != null && _hitsBlackKeyAt(x, whiteIndex * whiteKeyWidth)) {
+          return leftBlack;
         }
       }
     }
 
     return whiteNotes[whiteIndex];
   }
+
+  bool _hitsBlackKeyAt(double x, double centerX) {
+    final half = blackKeyWidth / 2;
+    return x >= centerX - half && x <= centerX + half;
+  }
 }
 
 class _PianoPainter extends CustomPainter {
-  final List<int> whiteNotes;
-  final List<int?> blackNotes;
+  final _KeyboardLayout layout;
   final Set<int> highlightedNotes;
-  final double whiteKeyWidth;
-  final double blackKeyWidth;
-  final double whiteKeyHeight;
-  final double blackKeyHeight;
   final bool showLabels;
 
   _PianoPainter({
-    required this.whiteNotes,
-    required this.blackNotes,
+    required this.layout,
     required this.highlightedNotes,
-    required this.whiteKeyWidth,
-    required this.blackKeyWidth,
-    required this.whiteKeyHeight,
-    required this.blackKeyHeight,
     required this.showLabels,
   });
 
+  static final _whitePaint = Paint()
+    ..color = PianoKeyboard._whiteKeyColor
+    ..style = PaintingStyle.fill;
+
+  static final _whiteStroke = Paint()
+    ..color = PianoKeyboard._whiteKeyBorderColor
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = PianoKeyboard._whiteKeyStrokeWidth;
+
+  static final _blackPaint = Paint()
+    ..color = PianoKeyboard._blackKeyColor
+    ..style = PaintingStyle.fill;
+
+  static final _highlightPaint = Paint()
+    ..color = PianoKeyboard._highlightColor
+        .withValues(alpha: PianoKeyboard._highlightAlpha)
+    ..style = PaintingStyle.fill;
+
   @override
   void paint(Canvas canvas, Size size) {
-    final whitePaint = Paint()
-      ..color = const Color(0xFFEEEEEE)
-      ..style = PaintingStyle.fill;
+    _drawWhiteKeys(canvas);
+    _drawBlackKeys(canvas);
+    if (showLabels) _drawLabels(canvas);
+  }
 
-    final whiteStroke = Paint()
-      ..color = const Color(0xFFAAAAAA)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5;
-
-    final blackPaint = Paint()
-      ..color = const Color(0xFF1A1A1A)
-      ..style = PaintingStyle.fill;
-
-    final highlightPaint = Paint()
-      ..color = const Color(0xFF5C6BC0).withValues(alpha: 0.6)
-      ..style = PaintingStyle.fill;
-
-    final whiteRRect = RRect.fromRectAndCorners(
-      Rect.fromLTWH(0, 0, whiteKeyWidth, whiteKeyHeight),
-      bottomLeft: const Radius.circular(6),
-      bottomRight: const Radius.circular(6),
+  void _drawWhiteKeys(Canvas canvas) {
+    final rrect = RRect.fromRectAndCorners(
+      Rect.fromLTWH(0, 0, layout.whiteKeyWidth, layout.whiteKeyHeight),
+      bottomLeft: const Radius.circular(PianoKeyboard._whiteKeyRadius),
+      bottomRight: const Radius.circular(PianoKeyboard._whiteKeyRadius),
     );
-
-    // Draw white keys
-    for (var i = 0; i < whiteNotes.length; i++) {
-      final note = whiteNotes[i];
-      final x = i * whiteKeyWidth;
+    for (var i = 0; i < layout.whiteNotes.length; i++) {
       canvas.save();
-      canvas.translate(x, 0);
-      canvas.drawRRect(whiteRRect, whitePaint);
-      canvas.drawRRect(whiteRRect, whiteStroke);
-      if (highlightedNotes.contains(note)) {
-        canvas.drawRRect(whiteRRect, highlightPaint);
+      canvas.translate(i * layout.whiteKeyWidth, 0);
+      canvas.drawRRect(rrect, _whitePaint);
+      canvas.drawRRect(rrect, _whiteStroke);
+      if (highlightedNotes.contains(layout.whiteNotes[i])) {
+        canvas.drawRRect(rrect, _highlightPaint);
       }
       canvas.restore();
     }
+  }
 
-    // Draw black keys
-    for (var i = 0; i < blackNotes.length; i++) {
-      final note = blackNotes[i];
+  void _drawBlackKeys(Canvas canvas) {
+    for (var i = 0; i < layout.blackNotes.length; i++) {
+      final note = layout.blackNotes[i];
       if (note == null) continue;
-      final x = (i + 1) * whiteKeyWidth - blackKeyWidth / 2;
-      final blackRRect = RRect.fromRectAndCorners(
-        Rect.fromLTWH(x, 0, blackKeyWidth, blackKeyHeight),
-        bottomLeft: const Radius.circular(4),
-        bottomRight: const Radius.circular(4),
+      final x = (i + 1) * layout.whiteKeyWidth - layout.blackKeyWidth / 2;
+      final rrect = RRect.fromRectAndCorners(
+        Rect.fromLTWH(x, 0, layout.blackKeyWidth, layout.blackKeyHeight),
+        bottomLeft: const Radius.circular(PianoKeyboard._blackKeyRadius),
+        bottomRight: const Radius.circular(PianoKeyboard._blackKeyRadius),
       );
-      canvas.drawRRect(blackRRect, blackPaint);
+      canvas.drawRRect(rrect, _blackPaint);
       if (highlightedNotes.contains(note)) {
-        canvas.drawRRect(blackRRect, highlightPaint);
+        canvas.drawRRect(rrect, _highlightPaint);
       }
     }
+  }
 
-    // Draw labels on white keys
-    if (showLabels) {
-      for (var i = 0; i < whiteNotes.length; i++) {
-        final note = whiteNotes[i];
-        final label = PianoKeyboard._noteLabels[note];
-        if (label == null) continue;
-        final tp = TextPainter(
-          text: TextSpan(
-            text: label,
-            style: TextStyle(
-              color: highlightedNotes.contains(note)
-                  ? const Color(0xFFFFFFFF)
-                  : const Color(0xFF555555),
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
+  void _drawLabels(Canvas canvas) {
+    for (var i = 0; i < layout.whiteNotes.length; i++) {
+      final note = layout.whiteNotes[i];
+      final label = PianoKeyboard._noteLabels[note];
+      if (label == null) continue;
+      final tp = TextPainter(
+        text: TextSpan(
+          text: label,
+          style: TextStyle(
+            color: highlightedNotes.contains(note)
+                ? PianoKeyboard._labelHighlightColor
+                : PianoKeyboard._labelDefaultColor,
+            fontSize: PianoKeyboard._labelFontSize,
+            fontWeight: FontWeight.w500,
           ),
-          textDirection: TextDirection.ltr,
-        )..layout(maxWidth: whiteKeyWidth);
-        tp.paint(
-          canvas,
-          Offset(
-            i * whiteKeyWidth + (whiteKeyWidth - tp.width) / 2,
-            whiteKeyHeight - tp.height - 10,
-          ),
-        );
-      }
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: layout.whiteKeyWidth);
+      tp.paint(
+        canvas,
+        Offset(
+          i * layout.whiteKeyWidth + (layout.whiteKeyWidth - tp.width) / 2,
+          layout.whiteKeyHeight - tp.height - PianoKeyboard._labelBottomPadding,
+        ),
+      );
     }
   }
 
   @override
   bool shouldRepaint(covariant _PianoPainter oldDelegate) {
     return highlightedNotes != oldDelegate.highlightedNotes ||
-        whiteNotes != oldDelegate.whiteNotes;
+        layout.whiteNotes != oldDelegate.layout.whiteNotes;
   }
 }

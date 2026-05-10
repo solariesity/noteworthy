@@ -1,3 +1,4 @@
+import '../../../core/constants.dart';
 import 'chord_definition.dart';
 
 class ChordInstance {
@@ -5,10 +6,6 @@ class ChordInstance {
   final String rootName;
   final ChordDefinition chordType;
   final List<int> midiNotes;
-
-  static const _noteNames = [
-    'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
-  ];
 
   const ChordInstance({
     required this.rootNote,
@@ -20,6 +17,6 @@ class ChordInstance {
   String get answerLabel => '$rootName${chordType.nameCn}';
 
   String get noteNames => midiNotes
-      .map((n) => '${_noteNames[n % 12]}${(n ~/ 12) - 1}')
+      .map((n) => '${kNoteNames[n % 12]}${(n ~/ 12) - 1}')
       .join(' ');
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/study_plan.dart';
+import '../../../core/widgets/back_header.dart';
 import '../providers/plan_provider.dart';
 
 class PlanListView extends StatelessWidget {
@@ -24,16 +25,7 @@ class PlanListView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      if (onBack != null)
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: onBack,
-                        ),
-                      Text('学习计划', style: theme.textTheme.headlineMedium),
-                    ],
-                  ),
+                  BackHeader(onBack: onBack, title: '学习计划'),
                   const SizedBox(height: 4),
                   Text(
                     '${plans.length} 个计划',

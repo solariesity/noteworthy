@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
+import '../../../core/widgets/back_header.dart';
 import '../providers/plan_provider.dart';
 import '../providers/word_provider.dart';
 import '../models/study_plan.dart';
@@ -48,15 +49,10 @@ class _PlanDetailViewState extends State<PlanDetailView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: widget.onBack,
-                    ),
-                    Expanded(
-                      child: Text(plan.name, style: theme.textTheme.headlineMedium),
-                    ),
+                BackHeader(
+                  onBack: widget.onBack,
+                  title: plan.name,
+                  trailing: [
                     PopupMenuButton<String>(
                       onSelected: (action) {
                         if (action == 'edit') {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/action_button.dart';
+import '../../../core/widgets/back_header.dart';
 import '../providers/word_provider.dart';
 import '../providers/plan_provider.dart';
 import '../models/word_entry.dart';
@@ -22,18 +23,7 @@ class WordCardView extends StatelessWidget {
         return SafeArea(
           child: Column(
             children: [
-              if (onBack != null)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: onBack,
-                      ),
-                    ],
-                  ),
-                ),
+              if (onBack != null) BackHeader(onBack: onBack),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),

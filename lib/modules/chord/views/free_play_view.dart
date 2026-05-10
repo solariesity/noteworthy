@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/widgets/piano_keyboard.dart';
+import '../../../core/widgets/back_header.dart';
 import '../../../midi/services/midi_player.dart';
 
 class FreePlayView extends StatefulWidget {
@@ -24,51 +25,43 @@ class _FreePlayViewState extends State<FreePlayView> {
     return SafeArea(
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    midiPlayer.allNotesOff();
-                    widget.onBack();
-                  },
-                ),
-                const SizedBox(width: 8),
-                Text('弹奏模式', style: theme.textTheme.titleLarge),
-                const Spacer(),
-                _buildButton(
-                  icon: Icons.edit_location,
-                  label: '标记',
-                  active: _marking,
-                  color: _marking ? theme.colorScheme.primary : null,
-                  onTap: () => setState(() => _marking = !_marking),
-                ),
-                const SizedBox(width: 4),
-                _buildButton(
-                  icon: Icons.play_arrow,
-                  label: '播放',
-                  onTap: () {
-                    for (final note in _markedNotes) {
-                      midiPlayer.noteOn(channel: 0, note: note);
-                    }
-                  },
-                ),
-                const SizedBox(width: 4),
-                _buildButton(
-                  icon: Icons.clear,
-                  label: '清除',
-                  onTap: () {
-                    midiPlayer.allNotesOff();
-                    setState(() {
-                      _markedNotes.clear();
-                      _marking = false;
-                    });
-                  },
-                ),
-              ],
-            ),
+          BackHeader(
+            onBack: () {
+              midiPlayer.allNotesOff();
+              widget.onBack();
+            },
+            title: '弹奏模式',
+            trailing: [
+              _buildButton(
+                icon: Icons.edit_location,
+                label: '标记',
+                active: _marking,
+                color: _marking ? theme.colorScheme.primary : null,
+                onTap: () => setState(() => _marking = !_marking),
+              ),
+              const SizedBox(width: 4),
+              _buildButton(
+                icon: Icons.play_arrow,
+                label: '播放',
+                onTap: () {
+                  for (final note in _markedNotes) {
+                    midiPlayer.noteOn(channel: 0, note: note);
+                  }
+                },
+              ),
+              const SizedBox(width: 4),
+              _buildButton(
+                icon: Icons.clear,
+                label: '清除',
+                onTap: () {
+                  midiPlayer.allNotesOff();
+                  setState(() {
+                    _markedNotes.clear();
+                    _marking = false;
+                  });
+                },
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Expanded(
