@@ -29,7 +29,7 @@ dev_dependencies:
 flutter_launcher_icons:
   windows:
     generate: true
-    image_path: windows/runner/resources/icon.png
+    image_path: windows/runner/resources/noteworthy-icon.png
     icon_size: 48
 
 flutter:
