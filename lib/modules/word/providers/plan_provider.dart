@@ -32,6 +32,9 @@ class PlanProvider extends ChangeNotifier {
     }
 
     _activePlanId = await _storage.loadActivePlanId();
+    if (_activePlanId != null) {
+      _currentPlan = await _storage.loadPlan(_activePlanId!);
+    }
     _loaded = true;
     notifyListeners();
   }

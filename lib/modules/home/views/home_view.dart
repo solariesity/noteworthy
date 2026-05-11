@@ -37,12 +37,6 @@ class _HomeViewState extends State<HomeView> {
     _timer = Timer.periodic(const Duration(minutes: 1), (_) {
       setState(() => _now = DateTime.now());
     });
-    // 如果有激活的学习计划但尚未加载，先异步加载
-    final planProvider = context.read<PlanProvider>();
-    final wordProvider = context.read<WordProvider>();
-    if (planProvider.activePlanId != null && !wordProvider.isPlanMode) {
-      planProvider.loadPlan(planProvider.activePlanId!);
-    }
   }
 
   @override
