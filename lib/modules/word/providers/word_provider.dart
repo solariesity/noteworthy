@@ -18,6 +18,7 @@ class WordProvider extends ChangeNotifier {
   bool get isLoaded => _currentWord != null;
   List<WordEntry> get allWords => _wordService.allWords;
   bool get isPlanMode => _planWords != null;
+  List<WordEntry> get effectiveWords => _planWords ?? _wordService.allWords;
 
   void selectWord(WordEntry entry) {
     _previousWordText = _currentWord?.word;

@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../word/providers/word_provider.dart';
+import '../../word/providers/plan_provider.dart';
 
 class _TimePeriod {
   final String greeting;
@@ -35,6 +37,12 @@ class _HomeViewState extends State<HomeView> {
     _timer = Timer.periodic(const Duration(minutes: 1), (_) {
       setState(() => _now = DateTime.now());
     });
+    // 如果有激活的学习计划但尚未加载，先异步加载
+    final planProvider = context.read<PlanProvider>();
+    final wordProvider = context.read<WordProvider>();
+    if (planProvider.activePlanId != null && !wordProvider.isPlanMode) {
+      planProvider.loadPlan(planProvider.activePlanId!);
+    }
   }
 
   @override
@@ -48,12 +56,17 @@ class _HomeViewState extends State<HomeView> {
     final theme = Theme.of(context);
     final period = _periodFromHour(_now.hour);
 
-    final words = context.read<WordProvider>().allWords;
-    // 基于 dayOfYear 取模，实现"每日一词"确定性切换
-    final dayOfYear = DateTime(_now.year, _now.month, _now.day)
-        .difference(DateTime(_now.year, 1, 1))
-        .inDays;
-    final dailyWord = words.isNotEmpty ? words[dayOfYear % words.length] : null;
+    final wordProvider = context.read<WordProvider>();
+    final planProvider = context.read<PlanProvider>();
+    // 优先使用学习计划中的词库，否则使用全词库
+    final words = wordProvider.isPlanMode
+        ? wordProvider.effectiveWords
+        : planProvider.currentPlan?.words ?? wordProvider.allWords;
+    // 以日期作为随机种子，同一天看到的是同一个词
+    final today = DateTime(_now.year, _now.month, _now.day);
+    final dailyWord = words.isNotEmpty
+        ? words[Random(today.millisecondsSinceEpoch).nextInt(words.length)]
+        : null;
 
     return SafeArea(
       child: Padding(

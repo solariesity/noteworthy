@@ -30,11 +30,11 @@ class ProgressionRevealProvider extends ChangeNotifier {
   bool get canReveal => _state == ProgressionPlayState.played;
 
   void nextProgression() {
-    _rootNote = 48 + _random.nextInt(25); // 48-72
+    _rootNote = 48 + _random.nextInt(25); // 48-72，仅作听觉基准
     final count = 3 + _random.nextInt(2); // 3-4 chords
     _chords = List.generate(
       count,
-      (_) => _generator.generateWithRoot(_rootNote!),
+      (_) => _generator.generate(), // 每个和弦独立随机根音
     );
     _state = ProgressionPlayState.idle;
     _currentChordIndex = -1;
