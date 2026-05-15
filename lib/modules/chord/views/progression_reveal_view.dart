@@ -101,7 +101,7 @@ class _ProgressionContent extends StatelessWidget {
         if (provider.hasPlayed) ...[
           const SizedBox(height: 24),
           SizedBox(
-            height: 200,
+            height: 240,
             child: Builder(builder: (context) {
               final rangeStart = (rootNote - 12).clamp(36, 60);
               final rangeEnd = (rootNote + 12).clamp(rangeStart + 24, 84);

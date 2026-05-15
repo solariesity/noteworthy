@@ -8,6 +8,8 @@ class PianoKeyboard extends StatelessWidget {
   final int startNote;
   final int endNote;
   final bool showLabels;
+  final double? height;
+  final int? rootNote;
 
   const PianoKeyboard({
     super.key,
@@ -17,6 +19,8 @@ class PianoKeyboard extends StatelessWidget {
     this.startNote = kMidiC3,
     this.endNote = kMidiC5,
     this.showLabels = true,
+    this.height,
+    this.rootNote,
   });
 
   // ===== 几何 =====
@@ -32,6 +36,8 @@ class PianoKeyboard extends StatelessWidget {
   static const _blackKeyColor = Color(0xFF1A1A1A);
   static const _highlightColor = Color(0xFF5C6BC0);
   static const _highlightAlpha = 0.6;
+  static const _rootHighlightColor = Color(0xFFF4A236);
+  static const _rootHighlightAlpha = 0.75;
 
   // ===== 标签 =====
   static const _labelHighlightColor = Color(0xFFFFFFFF);
@@ -71,12 +77,13 @@ class PianoKeyboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
+    Widget keyboard = LayoutBuilder(
       builder: (context, constraints) {
+        final h = height ?? constraints.maxHeight;
         final layout = _KeyboardLayout.compute(
           startNote: startNote,
           endNote: endNote,
-          size: Size(constraints.maxWidth, constraints.maxHeight),
+          size: Size(constraints.maxWidth, h),
         );
 
         return GestureDetector(
@@ -101,11 +108,17 @@ class PianoKeyboard extends StatelessWidget {
               layout: layout,
               highlightedNotes: highlightedNotes,
               showLabels: showLabels,
+              rootNote: rootNote,
             ),
           ),
         );
       },
     );
+
+    if (height != null) {
+      return SizedBox(height: height, child: keyboard);
+    }
+    return keyboard;
   }
 }
 
@@ -184,11 +197,13 @@ class _PianoPainter extends CustomPainter {
   final _KeyboardLayout layout;
   final Set<int> highlightedNotes;
   final bool showLabels;
+  final int? rootNote;
 
   _PianoPainter({
     required this.layout,
     required this.highlightedNotes,
     required this.showLabels,
+    this.rootNote,
   });
 
   static final _whitePaint = Paint()
@@ -207,6 +222,11 @@ class _PianoPainter extends CustomPainter {
   static final _highlightPaint = Paint()
     ..color = PianoKeyboard._highlightColor
         .withValues(alpha: PianoKeyboard._highlightAlpha)
+    ..style = PaintingStyle.fill;
+
+  static final _rootHighlightPaint = Paint()
+    ..color = PianoKeyboard._rootHighlightColor
+        .withValues(alpha: PianoKeyboard._rootHighlightAlpha)
     ..style = PaintingStyle.fill;
 
   @override
@@ -228,7 +248,10 @@ class _PianoPainter extends CustomPainter {
       canvas.drawRRect(rrect, _whitePaint);
       canvas.drawRRect(rrect, _whiteStroke);
       if (highlightedNotes.contains(layout.whiteNotes[i])) {
-        canvas.drawRRect(rrect, _highlightPaint);
+        canvas.drawRRect(
+          rrect,
+          layout.whiteNotes[i] == rootNote ? _rootHighlightPaint : _highlightPaint,
+        );
       }
       canvas.restore();
     }
@@ -246,7 +269,10 @@ class _PianoPainter extends CustomPainter {
       );
       canvas.drawRRect(rrect, _blackPaint);
       if (highlightedNotes.contains(note)) {
-        canvas.drawRRect(rrect, _highlightPaint);
+        canvas.drawRRect(
+          rrect,
+          note == rootNote ? _rootHighlightPaint : _highlightPaint,
+        );
       }
     }
   }
@@ -282,6 +308,7 @@ class _PianoPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _PianoPainter oldDelegate) {
     return highlightedNotes != oldDelegate.highlightedNotes ||
-        layout.whiteNotes != oldDelegate.layout.whiteNotes;
+        layout.whiteNotes != oldDelegate.layout.whiteNotes ||
+        rootNote != oldDelegate.rootNote;
   }
 }

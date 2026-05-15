@@ -90,7 +90,7 @@ class _IntervalContent extends StatelessWidget {
         if (provider.hasPlayed) ...[
           const SizedBox(height: 24),
           SizedBox(
-            height: 200,
+            height: 240,
             child: _buildKeyboard(midiPlayer, highlightedNotes),
           ),
           if (provider.hasAnswered) ...[
